@@ -20,16 +20,10 @@ import org.osgi.framework.ServiceReference;
 
 public class BluetoothDeviceImpl implements BluetoothDevice {
 
-    public static final int DEVICE_TYPE_DUAL = 0x003;
-    public static final int DEVICE_TYPE_LE = 0x002;
-    public static final int DEVICE_TYPE_UNKNOWN = 0x000;
+    private final tinyb.BluetoothDevice device;
 
-    private final String m_name;
-    private final String m_address;
-
-    public BluetoothDeviceImpl(String address, String name) {
-        this.m_address = address;
-        this.m_name = name;
+    public BluetoothDeviceImpl(tinyb.BluetoothDevice device) {
+        this.device = device;
     }
 
     // --------------------------------------------------------------------
@@ -39,17 +33,42 @@ public class BluetoothDeviceImpl implements BluetoothDevice {
     // --------------------------------------------------------------------
     @Override
     public String getName() {
-        return this.m_name;
+        return this.device.getName();
     }
 
     @Override
     public String getAdress() {
-        return this.m_address;
+        return getAddress();
+    }
+
+    @Override
+    public String getAddress() {
+        return this.device.getAddress();
     }
 
     @Override
     public int getType() {
-        return DEVICE_TYPE_UNKNOWN;
+        return 0;
+    }
+
+    @Override
+    public BluetoothGatt getBluetoothGatt() {
+        return getBluetoothGattClient();
+    }
+
+    @Override
+    public int getReceivedSignalStrength() {
+        return this.device.getRSSI();
+    }
+
+    @Override
+    public int getTransmittedSignalStrength() {
+        return this.device.getTxPower();
+    }
+
+    @Override
+    public BluetoothGatt getBluetoothGattClient() {
+        return new BluetoothGattImpl(this.device);
     }
 
     @Override
@@ -63,11 +82,6 @@ public class BluetoothDeviceImpl implements BluetoothDevice {
             }
         }
         return bluetoothConnector;
-    }
-
-    @Override
-    public BluetoothGatt getBluetoothGatt() {
-        return new BluetoothGattImpl(this.m_address);
     }
 
 }

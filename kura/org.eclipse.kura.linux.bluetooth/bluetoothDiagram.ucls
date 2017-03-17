@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.14" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
+  <class id="1" language="java" name="org.eclipse.kura.linux.bluetooth.le.BluetoothLeScanner" 
+    project="org.eclipse.kura.linux.bluetooth" 
+    file="/org.eclipse.kura.linux.bluetooth/src/main/java/org/eclipse/kura/linux/bluetooth/le/BluetoothLeScanner.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="512" width="461" x="4399" y="643"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="2" language="java" name="org.eclipse.kura.linux.bluetooth.le.beacon.BluetoothConfigurationProcessListener" 
+    project="org.eclipse.kura.linux.bluetooth" 
+    file="/org.eclipse.kura.linux.bluetooth/src/main/java/org/eclipse/kura/linux/bluetooth/le/beacon/BluetoothConfigurationProcessListener.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="170" width="443" x="3458" y="643"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="3" language="java" name="org.eclipse.kura.linux.bluetooth.le.BluetoothGattServiceImpl" 
+    project="org.eclipse.kura.linux.bluetooth" 
+    file="/org.eclipse.kura.linux.bluetooth/src/main/java/org/eclipse/kura/linux/bluetooth/le/BluetoothGattServiceImpl.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="188" width="317" x="304" y="1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="org.eclipse.kura.linux.bluetooth.BluetoothAdapterImpl" 
+    project="org.eclipse.kura.linux.bluetooth" 
+    file="/org.eclipse.kura.linux.bluetooth/src/main/java/org/eclipse/kura/linux/bluetooth/BluetoothAdapterImpl.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="602" width="635" x="4399" y="1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="5" language="java" name="org.eclipse.kura.linux.bluetooth.util.BluetoothUtil" 
+    project="org.eclipse.kura.linux.bluetooth" 
+    file="/org.eclipse.kura.linux.bluetooth/src/main/java/org/eclipse/kura/linux/bluetooth/util/BluetoothUtil.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="458" width="411" x="661" y="1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <interface id="6" language="java" name="org.eclipse.kura.linux.bluetooth.util.BluetoothProcessListener" 
+    project="org.eclipse.kura.linux.bluetooth" 
+    file="/org.eclipse.kura.linux.bluetooth/src/main/java/org/eclipse/kura/linux/bluetooth/util/BluetoothProcessListener.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="116" width="203" x="3941" y="1519"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </interface>  
+  <class id="7" language="java" name="org.eclipse.kura.linux.bluetooth.BluetoothDeviceImpl" 
+    project="org.eclipse.kura.linux.bluetooth" 
+    file="/org.eclipse.kura.linux.bluetooth/src/main/java/org/eclipse/kura/linux/bluetooth/BluetoothDeviceImpl.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="260" width="272" x="1466" y="1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="8" language="java" name="org.eclipse.kura.linux.bluetooth.le.BluetoothGattImpl" 
+    project="org.eclipse.kura.linux.bluetooth" 
+    file="/org.eclipse.kura.linux.bluetooth/src/main/java/org/eclipse/kura/linux/bluetooth/le/BluetoothGattImpl.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="836" width="418" x="3941" y="643"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="9" language="java" name="org.eclipse.kura.linux.bluetooth.util.BluetoothProcessUtil" 
+    project="org.eclipse.kura.linux.bluetooth" 
+    file="/org.eclipse.kura.linux.bluetooth/src/main/java/org/eclipse/kura/linux/bluetooth/util/BluetoothProcessUtil.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="188" width="225" x="1778" y="1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="10" language="java" name="org.eclipse.kura.linux.bluetooth.BluetoothServiceImpl" 
+    project="org.eclipse.kura.linux.bluetooth" 
+    file="/org.eclipse.kura.linux.bluetooth/src/main/java/org/eclipse/kura/linux/bluetooth/BluetoothServiceImpl.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="242" width="474" x="2651" y="1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="11" language="java" name="org.eclipse.kura.linux.bluetooth.le.BluetoothGattCharacteristicImpl" 
+    project="org.eclipse.kura.linux.bluetooth" 
+    file="/org.eclipse.kura.linux.bluetooth/src/main/java/org/eclipse/kura/linux/bluetooth/le/BluetoothGattCharacteristicImpl.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="332" width="343" x="3165" y="1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="12" language="java" name="org.eclipse.kura.linux.bluetooth.util.BluetoothProcess" 
+    project="org.eclipse.kura.linux.bluetooth" 
+    file="/org.eclipse.kura.linux.bluetooth/src/main/java/org/eclipse/kura/linux/bluetooth/util/BluetoothProcess.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="422" width="386" x="4184" y="1519"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <interface id="13" language="java" name="org.eclipse.kura.linux.bluetooth.util.BTSnoopListener" 
+    project="org.eclipse.kura.linux.bluetooth" 
+    file="/org.eclipse.kura.linux.bluetooth/src/main/java/org/eclipse/kura/linux/bluetooth/util/BTSnoopListener.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="98" width="223" x="4610" y="1519"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </interface>  
+  <class id="14" language="java" name="org.eclipse.kura.linux.bluetooth.le.beacon.BluetoothAdvertisingData" 
+    project="org.eclipse.kura.linux.bluetooth" 
+    file="/org.eclipse.kura.linux.bluetooth/src/main/java/org/eclipse/kura/linux/bluetooth/le/beacon/BluetoothAdvertisingData.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="224" width="542" x="3548" y="1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="15" language="java" name="org.eclipse.kura.linux.bluetooth.le.beacon.BTSnoopParser" 
+    project="org.eclipse.kura.linux.bluetooth" 
+    file="/org.eclipse.kura.linux.bluetooth/src/main/java/org/eclipse/kura/linux/bluetooth/le/beacon/BTSnoopParser.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="170" width="208" x="4184" y="1981"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <association id="16">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="17" name="bls"/>      
+      <multiplicity id="18" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="1" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="19">    
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="20" name="parser"/>      
+      <multiplicity id="21" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="15" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="22">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="6"/>  
+  </realization>  
+  <association id="23">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="24" name="dumpProc"/>      
+      <multiplicity id="25" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="12" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="26">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="6"/>  
+  </realization>  
+  <realization id="27">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="6"/>  
+  </realization>  
+  <realization id="28">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="13"/>  
+  </realization>  
+  <association id="29">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="30" name="m_proc"/>      
+      <multiplicity id="31" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="12" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    sort-features="false" accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true" static="true"/>    
+    <operations public="true" package="true" protected="true" private="true" static="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>

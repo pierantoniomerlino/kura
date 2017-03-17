@@ -24,7 +24,6 @@ import org.eclipse.kura.KuraException;
 import org.eclipse.kura.bluetooth.BluetoothAdapter;
 import org.eclipse.kura.bluetooth.BluetoothDevice;
 import org.eclipse.kura.bluetooth.BluetoothGattCharacteristic;
-import org.eclipse.kura.bluetooth.BluetoothGattSecurityLevel;
 import org.eclipse.kura.bluetooth.BluetoothGattService;
 import org.eclipse.kura.bluetooth.BluetoothLeScanListener;
 import org.eclipse.kura.bluetooth.BluetoothService;
@@ -61,7 +60,7 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
     private final String PROPERTY_INAME = "iname";
 
     private CloudService cloudService;
-    private static CloudClient cloudClient;
+    private CloudClient cloudClient;
     private List<TiSensorTag> tiSensorTagList;
     private BluetoothService bluetoothService;
     private BluetoothAdapter bluetoothAdapter;
@@ -71,7 +70,7 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
 
     private int period = 10;
     private int scantime = 5;
-    private static String topic = "data";
+    private String topic = "data";
     private long startTime;
     private boolean connected = false;
     private String iname = "hci0";
@@ -112,7 +111,7 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
     protected void activate(ComponentContext context, Map<String, Object> properties) {
         logger.info("Activating BluetoothLe example...");
 
-        readProperties(properties);
+        getProperties(properties);
 
         this.tiSensorTagList = new ArrayList<TiSensorTag>();
 
@@ -135,7 +134,6 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
                 if (this.bluetoothAdapter != null) {
                     logger.info("Bluetooth adapter interface => " + this.iname);
                     logger.info("Bluetooth adapter address => " + this.bluetoothAdapter.getAddress());
-                    logger.info("Bluetooth adapter le enabled => " + this.bluetoothAdapter.isLeReady());
 
                     if (!this.bluetoothAdapter.isEnabled()) {
                         logger.info("Enabling bluetooth adapter...");
@@ -201,7 +199,7 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
 
     protected void updated(Map<String, Object> properties) {
 
-        readProperties(properties);
+        getProperties(properties);
 
         try {
             logger.debug("Deactivating BluetoothLe...");
@@ -240,7 +238,6 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
                 if (this.bluetoothAdapter != null) {
                     logger.info("Bluetooth adapter interface => " + this.iname);
                     logger.info("Bluetooth adapter address => " + this.bluetoothAdapter.getAddress());
-                    logger.info("Bluetooth adapter le enabled => " + this.bluetoothAdapter.isLeReady());
 
                     if (!this.bluetoothAdapter.isEnabled()) {
                         logger.info("Enabling bluetooth adapter...");
@@ -278,7 +275,7 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
 
         // Scan for devices
         if (this.bluetoothAdapter.isScanning()) {
-            logger.info("m_bluetoothAdapter.isScanning");
+            logger.info("bluetoothAdapter.isScanning");
             if (System.currentTimeMillis() - this.startTime >= this.scantime * 1000) {
                 this.bluetoothAdapter.killLeScan();
             }
@@ -298,7 +295,60 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
     //
     // --------------------------------------------------------------------
 
-    protected static void doPublishKeys(String address, Object key) {
+    private void getProperties(Map<String, Object> properties) {
+        if (properties != null) {
+            if (properties.get(this.PROPERTY_SCAN) != null) {
+                this.enableScan = (Boolean) properties.get(this.PROPERTY_SCAN);
+            }
+            if (properties.get(this.PROPERTY_SCANTIME) != null) {
+                this.scantime = (Integer) properties.get(this.PROPERTY_SCANTIME);
+            }
+            if (properties.get(this.PROPERTY_PERIOD) != null) {
+                this.period = (Integer) properties.get(this.PROPERTY_PERIOD);
+            }
+            if (properties.get(this.PROPERTY_TEMP) != null) {
+                this.enableTemp = (Boolean) properties.get(this.PROPERTY_TEMP);
+            }
+            if (properties.get(this.PROPERTY_ACC) != null) {
+                this.enableAcc = (Boolean) properties.get(this.PROPERTY_ACC);
+            }
+            if (properties.get(this.PROPERTY_HUM) != null) {
+                this.enableHum = (Boolean) properties.get(this.PROPERTY_HUM);
+            }
+            if (properties.get(this.PROPERTY_MAG) != null) {
+                this.enableMag = (Boolean) properties.get(this.PROPERTY_MAG);
+            }
+            if (properties.get(this.PROPERTY_PRES) != null) {
+                this.enablePres = (Boolean) properties.get(this.PROPERTY_PRES);
+            }
+            if (properties.get(this.PROPERTY_GYRO) != null) {
+                this.enableGyro = (Boolean) properties.get(this.PROPERTY_GYRO);
+            }
+            if (properties.get(this.PROPERTY_OPTO) != null) {
+                this.enableOpto = (Boolean) properties.get(this.PROPERTY_OPTO);
+            }
+            if (properties.get(this.PROPERTY_BUTTONS) != null) {
+                this.enableButtons = (Boolean) properties.get(this.PROPERTY_BUTTONS);
+            }
+            if (properties.get(this.PROPERTY_REDLED) != null) {
+                this.enableRedLed = (Boolean) properties.get(this.PROPERTY_REDLED);
+            }
+            if (properties.get(this.PROPERTY_GREENLED) != null) {
+                this.enableGreenLed = (Boolean) properties.get(this.PROPERTY_GREENLED);
+            }
+            if (properties.get(this.PROPERTY_BUZZER) != null) {
+                this.enableBuzzer = (Boolean) properties.get(this.PROPERTY_BUZZER);
+            }
+            if (properties.get(this.PROPERTY_TOPIC) != null) {
+                this.topic = (String) properties.get(this.PROPERTY_TOPIC);
+            }
+            if (properties.get(this.PROPERTY_INAME) != null) {
+                this.iname = (String) properties.get(this.PROPERTY_INAME);
+            }
+        }
+    }
+
+    protected void doPublishKeys(String address, Object key) {
         KuraPayload payload = new KuraPayload();
         payload.setTimestamp(new Date());
         payload.addMetric("key", key);
@@ -332,7 +382,7 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
     private boolean searchSensorTagList(String address) {
 
         for (TiSensorTag tiSensorTag : this.tiSensorTagList) {
-            if (tiSensorTag.getBluetoothDevice().getAdress().equals(address)) {
+            if (tiSensorTag.getBluetoothDevice().getAddress().equals(address)) {
                 return true;
             }
         }
@@ -408,16 +458,16 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
 
         // Scan for TI SensorTag
         for (BluetoothDevice bluetoothDevice : scanResults) {
-            logger.info("Address " + bluetoothDevice.getAdress() + " Name " + bluetoothDevice.getName());
+            logger.info("Address " + bluetoothDevice.getAddress() + " Name " + bluetoothDevice.getName());
 
             if (bluetoothDevice.getName().contains("SensorTag")) {
-                logger.info("TI SensorTag " + bluetoothDevice.getAdress() + " found.");
-                if (!searchSensorTagList(bluetoothDevice.getAdress())) {
+                logger.info("TI SensorTag " + bluetoothDevice.getAddress() + " found.");
+                if (!searchSensorTagList(bluetoothDevice.getAddress())) {
                     TiSensorTag tiSensorTag = new TiSensorTag(bluetoothDevice);
                     this.tiSensorTagList.add(tiSensorTag);
                 }
             } else {
-                logger.info("Found device = " + bluetoothDevice.getAdress());
+                logger.info("Found device = " + bluetoothDevice.getAddress());
             }
         }
 
@@ -429,11 +479,6 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
             if (!myTiSensorTag.isConnected()) {
                 logger.info("Connecting to TiSensorTag...");
                 this.connected = myTiSensorTag.connect(this.iname);
-                if (this.connected) {
-                    logger.info("Set security level to high.");
-                    myTiSensorTag.setSecurityLevel(BluetoothGattSecurityLevel.HIGH);
-                    logger.info("Security Level : " + myTiSensorTag.getSecurityLevel().toString());
-                }
             } else {
                 logger.info("TiSensorTag already connected!");
                 this.connected = true;
@@ -450,10 +495,10 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
                 }
 
                 // Test
-                // doServicesDiscovery(myTiSensorTag);
-                // doCharacteristicsDiscovery(myTiSensorTag);
+                doServicesDiscovery(myTiSensorTag);
+                doCharacteristicsDiscovery(myTiSensorTag);
 
-                myTiSensorTag.setFirmwareRevision(myTiSensorTag.firmwareRevision());
+                // myTiSensorTag.setFirmwareRevision(myTiSensorTag.firmwareRevision());
 
                 if (this.enableTemp) {
                     myTiSensorTag.enableTermometer();
@@ -462,7 +507,7 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    double[] temperatures = myTiSensorTag.readTemperature();
+                    double[] temperatures = myTiSensorTag.readTemperatureByUuid();
 
                     logger.info("Ambient: " + temperatures[0] + " Target: " + temperatures[1]);
 

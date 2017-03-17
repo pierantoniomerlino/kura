@@ -30,11 +30,26 @@ public interface BluetoothAdapter {
     public String getAddress();
 
     /**
+     * Get the name of the Bluetooth adapter.
+     *
+     * @return The name of the adapter
+     */
+    public String getName();
+
+    /**
      * Kill the process started by startLeScan or startBeaconScan.<br>
-     * SIGINT must be sent to the hcitool process. Otherwise the adapter must be toggled (down/up).
      *
      */
     public void killLeScan();
+
+    /**
+     * Kill the process started by startLeScan or startBeaconScan.<br>
+     * 
+     * @param getDevices
+     *            if true the discovered devices are returned to the listener
+     * 
+     */
+    public void killLeScan(boolean getDevices);
 
     /**
      * Return true if a lescan is running
@@ -54,6 +69,7 @@ public interface BluetoothAdapter {
      *
      * @return true if the adapter supports Bluetooth LE, false otherwise
      */
+    @Deprecated
     public boolean isLeReady();
 
     /**
@@ -103,7 +119,7 @@ public interface BluetoothAdapter {
     void startBeaconScan(String companyName, BluetoothBeaconScanListener listener);
 
     /**
-     * Get a remote Bluetooth device based on hardware adress
+     * Get a remote Bluetooth device based on hardware address
      *
      * @param address
      *            Hardware address of remote device

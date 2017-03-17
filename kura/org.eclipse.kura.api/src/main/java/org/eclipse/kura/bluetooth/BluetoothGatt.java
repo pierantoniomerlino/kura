@@ -18,13 +18,15 @@ import org.eclipse.kura.KuraException;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
- * The BluetoothGatt service is the main communication interface with the Bluettoth LE device. The service
+ * The BluetoothGatt service is the main communication interface with the Bluetooth LE device. The service
  * will provide information about available services and mechanisms for reading and writing to
  * available characteristics.
  *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 @ProviderType
+// Should we rename it BluetoothGattClient?
+// Add Pairing, Profile, Trusted, Blocked, manufacturerData,
 public interface BluetoothGatt {
 
     /**
@@ -42,6 +44,7 @@ public interface BluetoothGatt {
      * @return If connection was successful
      * @since 1.0.8
      */
+    @Deprecated
     public boolean connect(String adapterName) throws KuraException;
 
     /**
@@ -63,6 +66,7 @@ public interface BluetoothGatt {
      * @param listener
      *            BluetoothLeListener
      */
+    @Deprecated
     public void setBluetoothLeNotificationListener(BluetoothLeNotificationListener listener);
 
     /**
@@ -122,6 +126,7 @@ public interface BluetoothGatt {
     public void writeCharacteristicValue(String handle, String value);
 
     /**
+     * <<<<<<< HEAD
      * Get security level.
      *
      * @throws KuraException
@@ -137,4 +142,14 @@ public interface BluetoothGatt {
      * @since 1.2
      */
     public void setSecurityLevel(BluetoothGattSecurityLevel level);
+
+    /**
+     * Write value to characteristic by UUID.
+     *
+     * @param uuid
+     *            UUID of Characteristic
+     * @param value
+     *            Value to write to Characteristic
+     */
+    public void writeCharacteristicValueByUuid(UUID uuid, String value);
 }

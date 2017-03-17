@@ -16,7 +16,12 @@ import org.osgi.service.wireadmin.Producer;
  * The WireEmitter is a marker interface which represents a wire component which
  * is a data producer that can produce values. The produced values can be used
  * by other {@link WireReceiver} components if it is wired with each other.
+<<<<<<< HEAD
  * @since 1.2
+=======
+ *
+ * @noimplement This interface is not intended to be implemented by clients.
+>>>>>>> TinyB integration
  */
 @ConsumerType
 public interface WireEmitter extends WireComponent, Producer {

@@ -35,6 +35,7 @@ public class TiSensorTagGatt {
     public static final String HANDLE_TEMP_SENSOR_ENABLE_2650 = "0x0024";
     public static final String HANDLE_TEMP_SENSOR_PERIOD_2650 = "0x0026";
 
+    public static final UUID UUID_TEMP_SENSOR_SERVICE = UUID.fromString("f000aa00-0451-4000-b000-000000000000");
     public static final UUID UUID_TEMP_SENSOR_VALUE = UUID.fromString("f000aa01-0451-4000-b000-000000000000");
     public static final UUID UUID_TEMP_SENSOR_ENABLE = UUID.fromString("f000aa02-0451-4000-b000-000000000000");
     public static final UUID UUID_TEMP_SENSOR_PERIOD = UUID.fromString("f000aa03-0451-4000-b000-000000000000");

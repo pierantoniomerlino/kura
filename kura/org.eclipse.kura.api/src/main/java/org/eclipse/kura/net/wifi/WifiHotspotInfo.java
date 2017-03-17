@@ -12,6 +12,7 @@
 package org.eclipse.kura.net.wifi;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -27,8 +28,8 @@ public class WifiHotspotInfo {
     private final int channel;
     private final int frequency;
     private final WifiSecurity security;
-    private EnumSet<WifiSecurity> pairCiphers;
-    private EnumSet<WifiSecurity> groupCiphers;
+    private Set<WifiSecurity> pairCiphers;
+    private Set<WifiSecurity> groupCiphers;
 
     public WifiHotspotInfo(String ssid, String macAddress, int signalLevel, int channel, int frequency,
             WifiSecurity security) {
@@ -42,7 +43,7 @@ public class WifiHotspotInfo {
     }
 
     public WifiHotspotInfo(String ssid, String macAddress, int signalLevel, int channel, int frequency,
-            WifiSecurity security, EnumSet<WifiSecurity> pairCiphers, EnumSet<WifiSecurity> groupCiphers) {
+            WifiSecurity security, Set<WifiSecurity> pairCiphers, Set<WifiSecurity> groupCiphers) {
         this(ssid, macAddress, signalLevel, channel, frequency, security);
         this.pairCiphers = pairCiphers;
         this.groupCiphers = groupCiphers;
@@ -72,24 +73,24 @@ public class WifiHotspotInfo {
         return this.security;
     }
 
-    public EnumSet<WifiSecurity> getPairCiphers() {
+    public Set<WifiSecurity> getPairCiphers() {
         return this.pairCiphers;
     }
 
-    public EnumSet<WifiSecurity> getGroupCiphers() {
+    public Set<WifiSecurity> getGroupCiphers() {
         return this.groupCiphers;
     }
 
     /**
-	 * @since 1.2
-	 */
+     * @since 1.2
+     */
     public void setPairCiphers(EnumSet<WifiSecurity> pairCiphers) {
         this.pairCiphers = pairCiphers;
     }
 
     /**
-	 * @since 1.2
-	 */
+     * @since 1.2
+     */
     public void setGroupCiphers(EnumSet<WifiSecurity> groupCiphers) {
         this.groupCiphers = groupCiphers;
     }

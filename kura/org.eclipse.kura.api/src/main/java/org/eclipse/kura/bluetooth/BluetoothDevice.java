@@ -40,7 +40,29 @@ public interface BluetoothDevice {
      *
      * @return The physical address of the device
      */
+    @Deprecated
     public String getAdress();
+
+    /**
+     * Returns the physical address of the device.
+     *
+     * @return The physical address of the device
+     */
+    public String getAddress();
+
+    /**
+     * Returns the Received Signal Strength Indicator of the device.
+     *
+     * @return The Received Signal Strength Indicator of the device
+     */
+    public int getReceivedSignalStrength();
+
+    /**
+     * Returns the Transmitted Signal Strength Indicator of the device.
+     *
+     * @return The Transmitted Signal Strength Indicator of the device
+     */
+    public int getTransmittedSignalStrength();
 
     /**
      * The type of devices, name whether the device supports
@@ -48,6 +70,7 @@ public interface BluetoothDevice {
      *
      * @return The device type
      */
+    @Deprecated
     public int getType();
 
     /**
@@ -65,6 +88,15 @@ public interface BluetoothDevice {
      *
      * @return BluetoothGatt
      */
+    @Deprecated
     public BluetoothGatt getBluetoothGatt();
+
+    /**
+     * Return an instance of a Bluetooth GATT server to be
+     * used in communicating with Bluetooth LE devices.
+     *
+     * @return BluetoothGatt
+     */
+    public BluetoothGatt getBluetoothGattClient();
 
 }
