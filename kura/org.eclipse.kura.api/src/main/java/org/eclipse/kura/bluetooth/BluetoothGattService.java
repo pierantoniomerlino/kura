@@ -24,7 +24,13 @@ public interface BluetoothGattService {
     /*
      * Get list of characteristics of the service
      */
+    @Deprecated
     public List<BluetoothGattCharacteristic> getCharacterisitcs();
+
+    /*
+     * Get list of characteristics of the service
+     */
+    public List<BluetoothGattCharacteristic> getCharacteristics();
 
     /*
      * Return the UUID of this service

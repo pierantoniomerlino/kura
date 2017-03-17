@@ -20,11 +20,14 @@ import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tinyb.BluetoothManager;
+
 public class BluetoothServiceImpl implements BluetoothService {
 
-    private static final Logger s_logger = LoggerFactory.getLogger(BluetoothServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(BluetoothServiceImpl.class);
 
-    private static ComponentContext s_context;
+    private static ComponentContext componentContext;
+    private static BluetoothManager bluetoothManager;
 
     // --------------------------------------------------------------------
     //
@@ -32,12 +35,13 @@ public class BluetoothServiceImpl implements BluetoothService {
     //
     // --------------------------------------------------------------------
     protected void activate(ComponentContext context) {
-        s_logger.info("Activating Bluetooth Service...");
-        s_context = context;
+        logger.info("Activating Bluetooth Service...");
+        componentContext = context;
+        bluetoothManager = BluetoothManager.getBluetoothManager();
     }
 
-    protected void deactivate(ComponentContext context) {
-        s_logger.debug("Deactivating Bluetooth Service...");
+    protected void deactivate() {
+        logger.debug("Deactivating Bluetooth Service...");
     }
 
     // --------------------------------------------------------------------
@@ -52,21 +56,34 @@ public class BluetoothServiceImpl implements BluetoothService {
 
     @Override
     public BluetoothAdapter getBluetoothAdapter(String name) {
+        BluetoothAdapterImpl adapter = null;
         try {
-            return new BluetoothAdapterImpl(name);
+            for (tinyb.BluetoothAdapter ba : bluetoothManager.getAdapters()) {
+                if (ba.getInterfaceName().equals(name)) {
+                    adapter = new BluetoothAdapterImpl(ba);
+                    break;
+                }
+            }
+            return adapter;
         } catch (KuraException e) {
-            s_logger.error("Could not get bluetooth adapter", e);
+            logger.error("Could not get bluetooth adapter", e);
             return null;
         }
     }
 
     @Override
     public BluetoothAdapter getBluetoothAdapter(String name, BluetoothBeaconCommandListener bbcl) {
+        BluetoothAdapterImpl adapter = null;
         try {
-            BluetoothAdapterImpl bbs = new BluetoothAdapterImpl(name, bbcl);
-            return bbs;
+            for (tinyb.BluetoothAdapter ba : bluetoothManager.getAdapters()) {
+                if (ba.getInterfaceName().equals(name)) {
+                    adapter = new BluetoothAdapterImpl(ba, bbcl);
+                    break;
+                }
+            }
+            return adapter;
         } catch (KuraException e) {
-            s_logger.error("Could not get bluetooth beacon service", e);
+            logger.error("Could not get bluetooth beacon service", e);
             return null;
         }
     }
@@ -77,7 +94,6 @@ public class BluetoothServiceImpl implements BluetoothService {
     //
     // --------------------------------------------------------------------
     static BundleContext getBundleContext() {
-        return s_context.getBundleContext();
+        return componentContext.getBundleContext();
     }
-
 }
