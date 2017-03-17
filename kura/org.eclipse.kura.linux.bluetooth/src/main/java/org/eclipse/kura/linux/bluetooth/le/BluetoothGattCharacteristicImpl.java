@@ -45,22 +45,6 @@ public class BluetoothGattCharacteristicImpl implements BluetoothGattCharacteris
         this.characteristic = characteristic;
     }
 
-    public void setBluetoothLeNotificationListener(BluetoothLeNotificationListener listener) {
-        this.listener = listener;
-        BluetoothNotification<byte[]> notification = value -> BluetoothGattCharacteristicImpl.this.listener
-                .onDataReceived(BluetoothGattCharacteristicImpl.this.handle, toHexString(value));
-        this.characteristic.enableValueNotifications(notification);
-    }
-
-    public void unsetBluetoothLeNotificationListener() {
-        this.listener = null;
-        this.characteristic.disableValueNotifications();
-    }
-
-    public BluetoothLeNotificationListener getBluetoothLeNotificationListener() {
-        return this.listener;
-    }
-
     // --------------------------------------------------------------------
     //
     // BluetoothGattCharacteristic API
@@ -133,6 +117,25 @@ public class BluetoothGattCharacteristicImpl implements BluetoothGattCharacteris
             }
         }
         return descriptor;
+    }
+
+    @Override
+    public void setBluetoothLeNotificationListener(BluetoothLeNotificationListener listener) {
+        this.listener = listener;
+        BluetoothNotification<byte[]> notification = value -> BluetoothGattCharacteristicImpl.this.listener
+                .onDataReceived(BluetoothGattCharacteristicImpl.this.handle, toHexString(value));
+        this.characteristic.enableValueNotifications(notification);
+    }
+
+    @Override
+    public void unsetBluetoothLeNotificationListener() {
+        this.listener = null;
+        this.characteristic.disableValueNotifications();
+    }
+
+    @Override
+    public BluetoothLeNotificationListener getBluetoothLeNotificationListener() {
+        return this.listener;
     }
 
     public tinyb.BluetoothGattCharacteristic getCharacteristic() {

@@ -163,13 +163,11 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
      * Enable temperature sensor
      */
     public void enableTermometer() {
-        // BluetoothGattService service = this.m_bluetoothGatt.getService(TiSensorTagGatt.UUID_TEMP_SENSOR_SERVICE);
+        BluetoothGattService service = this.bluetoothGattClient.getService(TiSensorTagGatt.UUID_TEMP_SENSOR_SERVICE);
         byte[] value = { 0x01 };
         // Write "01" to enable temperature sensor
         if (this.isCC2650) {
-            // this.m_bluetoothGatt.writeCharacteristicValue(TiSensorTagGatt.HANDLE_TEMP_SENSOR_ENABLE_2650, "01");
-            // service.getCharacteristic(TiSensorTagGatt.UUID_TEMP_SENSOR_ENABLE).writeValue(value);
-            this.bluetoothGattClient.writeCharacteristicValueByUuid(TiSensorTagGatt.UUID_TEMP_SENSOR_ENABLE, "01");
+            service.getCharacteristic(TiSensorTagGatt.UUID_TEMP_SENSOR_ENABLE).writeValue(value);
         } else {
             this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_TEMP_SENSOR_ENABLE_2541, "01");
         }
@@ -179,9 +177,11 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
      * Disable temperature sensor
      */
     public void disableTermometer() {
+        BluetoothGattService service = this.bluetoothGattClient.getService(TiSensorTagGatt.UUID_TEMP_SENSOR_SERVICE);
+        byte[] value = { 0x00 };
         // Write "00" disable temperature sensor
         if (this.isCC2650) {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_TEMP_SENSOR_ENABLE_2650, "00");
+            service.getCharacteristic(TiSensorTagGatt.UUID_TEMP_SENSOR_ENABLE).writeValue(value);
         } else {
             this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_TEMP_SENSOR_ENABLE_2541, "00");
         }
@@ -202,7 +202,7 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
                         .readCharacteristicValue(TiSensorTagGatt.HANDLE_TEMP_SENSOR_VALUE_2541));
             }
         } catch (KuraException e) {
-            logger.error(e.toString());
+            logger.error("Failed to read temperature", e);
         }
         return temperatures;
     }
@@ -212,50 +212,32 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
      */
     public double[] readTemperatureByUuid() {
         BluetoothGattService service = this.bluetoothGattClient.getService(TiSensorTagGatt.UUID_TEMP_SENSOR_SERVICE);
-        double[] temperatures = new double[2];
-        // try {
-        temperatures = calculateTemperature(
-                // this.m_bluetoothGatt.readCharacteristicValueByUuid(TiSensorTagGatt.UUID_TEMP_SENSOR_VALUE));
+        return calculateTemperature(
                 toHexString(service.getCharacteristic(TiSensorTagGatt.UUID_TEMP_SENSOR_VALUE).readValue()));
-        // } catch (KuraException e) {
-        // s_logger.error(e.toString());
-        // }
-        return temperatures;
     }
 
     /*
      * Enable temperature notifications
      */
-    public void enableTemperatureNotifications() {
-        // Write "01:00 to enable notifications
-        if (this.isCC2650) {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_TEMP_SENSOR_NOTIFICATION_2650,
-                    "01:00");
-        } else {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_TEMP_SENSOR_NOTIFICATION_2541,
-                    "01:00");
-        }
+    public void enableTemperatureNotifications(BluetoothLeNotificationListener listener) {
+        BluetoothGattService service = this.bluetoothGattClient.getService(TiSensorTagGatt.UUID_TEMP_SENSOR_SERVICE);
+        service.getCharacteristic(TiSensorTagGatt.UUID_TEMP_SENSOR_VALUE).setBluetoothLeNotificationListener(listener);
     }
 
     /*
      * Disable temperature notifications
      */
     public void disableTemperatureNotifications() {
-        // Write "00:00 to enable notifications
-        if (this.isCC2650) {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_TEMP_SENSOR_NOTIFICATION_2650,
-                    "00:00");
-        } else {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_TEMP_SENSOR_NOTIFICATION_2541,
-                    "00:00");
-        }
+        BluetoothGattService service = this.bluetoothGattClient.getService(TiSensorTagGatt.UUID_TEMP_SENSOR_SERVICE);
+        service.getCharacteristic(TiSensorTagGatt.UUID_TEMP_SENSOR_VALUE).unsetBluetoothLeNotificationListener();
     }
 
     /*
      * Set sampling period (only for CC2650)
      */
     public void setTermometerPeriod(String period) {
-        this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_TEMP_SENSOR_PERIOD_2650, period);
+        BluetoothGattService service = this.bluetoothGattClient.getService(TiSensorTagGatt.UUID_TEMP_SENSOR_SERVICE);
+        service.getCharacteristic(TiSensorTagGatt.UUID_ACC_SENSOR_PERIOD).writeValue(value);
     }
 
     /*
