@@ -17,11 +17,13 @@ import java.util.UUID;
 import org.eclipse.kura.KuraException;
 
 /**
- * The BluetoothGatt service is the main communication interface with the Bluettoth LE device. The service
+ * The BluetoothGatt service is the main communication interface with the Bluetooth LE device. The service
  * will provide information about available services and mechanisms for reading and writing to
  * available characteristics.
  *
  */
+// Should we rename it BluetoothGattClient?
+// Add Pairing, Profile, Trusted, Blocked, manufacturerData,
 public interface BluetoothGatt {
 
     /**
@@ -39,6 +41,7 @@ public interface BluetoothGatt {
      * @return If connection was successful
      * @since {@link org.eclipse.kura.bluetooth} 1.2.0
      */
+    @Deprecated
     public boolean connect(String adapterName) throws KuraException;
 
     /**
@@ -60,6 +63,7 @@ public interface BluetoothGatt {
      * @param listener
      *            BluetoothLeListener
      */
+    @Deprecated
     public void setBluetoothLeNotificationListener(BluetoothLeNotificationListener listener);
 
     /**
@@ -117,4 +121,14 @@ public interface BluetoothGatt {
      *            Value to write to Characteristic
      */
     public void writeCharacteristicValue(String handle, String value);
+
+    /**
+     * Write value to characteristic by UUID.
+     *
+     * @param uuid
+     *            UUID of Characteristic
+     * @param value
+     *            Value to write to Characteristic
+     */
+    public void writeCharacteristicValueByUuid(UUID uuid, String value);
 }
