@@ -68,11 +68,5 @@ public enum KuraErrorCode {
      * 
      * @since {@link org.eclipse.kura} 1.3.0
      */
-    PROCESS_EXECUTION_ERROR,
-    /**
-     * Error processing a subscribe/unsubscribe operation
-     * 
-     * @since {@link org.eclipse.kura} 1.3.0
-     */
-    SUBSCRIPTION_ERROR
+    PROCESS_EXECUTION_ERROR
 }

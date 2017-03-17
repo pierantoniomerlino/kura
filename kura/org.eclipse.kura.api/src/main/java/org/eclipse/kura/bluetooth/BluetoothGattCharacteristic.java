@@ -78,6 +78,7 @@ public interface BluetoothGattCharacteristic {
      */
     public BluetoothGattDescriptor getDescriptor(UUID uuid);
 
+<<<<<<< HEAD
     /*
      * Set the notification listener for this characteristic
      */
@@ -92,4 +93,7 @@ public interface BluetoothGattCharacteristic {
      * Get the notification listener for this characteristic
      */
     public BluetoothLeNotificationListener getBluetoothLeNotificationListener();
+=======
+    // APIs for data notifications
+>>>>>>> 71c632e9b191017bc2d6a0b0bf9c1e79552455c1
 }

@@ -98,8 +98,13 @@ public class BluetoothGattServiceImpl implements BluetoothGattService {
         for (BluetoothGattCharacteristic c : this.characteristics) {
             handles.add(Integer.valueOf(c.getHandle(), 16));
         }
+<<<<<<< HEAD
         boundaryHandles[0] = String.format("%02x", Integer.toHexString(Collections.min(handles)));
         boundaryHandles[1] = String.format("%02x", Integer.toHexString(Collections.max(handles)));
+=======
+        boundaryHandles[0] = Integer.toHexString(Collections.min(handles));
+        boundaryHandles[1] = Integer.toHexString(Collections.max(handles));
+>>>>>>> 71c632e9b191017bc2d6a0b0bf9c1e79552455c1
         return boundaryHandles;
     }
 }
