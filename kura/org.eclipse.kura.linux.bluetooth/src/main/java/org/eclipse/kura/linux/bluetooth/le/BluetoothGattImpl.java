@@ -19,7 +19,6 @@ import java.util.UUID;
 import org.eclipse.kura.KuraException;
 import org.eclipse.kura.bluetooth.BluetoothGatt;
 import org.eclipse.kura.bluetooth.BluetoothGattCharacteristic;
-import org.eclipse.kura.bluetooth.BluetoothGattSecurityLevel;
 import org.eclipse.kura.bluetooth.BluetoothGattService;
 import org.eclipse.kura.bluetooth.BluetoothLeNotificationListener;
 import org.eclipse.kura.linux.bluetooth.util.BluetoothProcessListener;
@@ -226,55 +225,6 @@ public class BluetoothGattImpl implements BluetoothGatt, BluetoothProcessListene
 
     @Override
     public void processInputStream(String string) {
-    }
-
-    @Override
-    public void processErrorStream(String string) {
-    }
-
-    @Override
-    public BluetoothGattSecurityLevel getSecurityLevel() throws KuraException {
-
-        BluetoothGattSecurityLevel level = BluetoothGattSecurityLevel.UNKNOWN;
-        if (this.isConnected && this.proc != null) {
-            this.securityLevel = "";
-            this.bufferedWriter = this.proc.getWriter();
-            logger.info("Get security level...");
-            String command = "sec-level\n";
-            sendCmd(command);
-
-            // Wait until read is complete, error is received or timeout
-            long startTime = System.currentTimeMillis();
-            while ("".equals(this.securityLevel) && !this.securityLevel.startsWith("ERROR")
-                    && System.currentTimeMillis() - startTime < GATT_COMMAND_TIMEOUT) {
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    logger.error("Exception waiting for characteristics", e);
-                }
-            }
-            if ("".equals(this.securityLevel)) {
-                throw new KuraTimeoutException("Gatttool read timeout.");
-            } else if (this.securityLevel.startsWith("ERROR")) {
-                throw KuraException.internalError("Gatttool read error.");
-            }
-
-            level = BluetoothGattSecurityLevel.getBluetoothGattSecurityLevel(this.securityLevel);
-        }
-
-        return level;
-    }
-
-    @Override
-    public void setSecurityLevel(BluetoothGattSecurityLevel level) {
-
-        if (this.isConnected && this.proc != null) {
-            this.bufferedWriter = this.proc.getWriter();
-            logger.debug("Set security level to {}", level.toString());
-            String command = "sec-level " + level.toString().toLowerCase() + "\n";
-            sendCmd(command);
-        }
-
     }
 
     // --------------------------------------------------------------------

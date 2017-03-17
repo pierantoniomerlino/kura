@@ -126,7 +126,6 @@ public interface BluetoothGatt {
     public void writeCharacteristicValue(String handle, String value);
 
     /**
-     * <<<<<<< HEAD
      * Get security level.
      *
      * @throws KuraException

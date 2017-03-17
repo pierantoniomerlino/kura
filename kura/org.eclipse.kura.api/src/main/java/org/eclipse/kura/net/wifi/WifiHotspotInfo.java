@@ -11,7 +11,10 @@
  *******************************************************************************/
 package org.eclipse.kura.net.wifi;
 
+<<<<<<< HEAD
 import java.util.EnumSet;
+=======
+>>>>>>> TinyB integration
 import java.util.Set;
 
 import org.osgi.annotation.versioning.ProviderType;

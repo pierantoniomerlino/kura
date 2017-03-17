@@ -60,7 +60,7 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
     private final String PROPERTY_INAME = "iname";
 
     private CloudService cloudService;
-    private static CloudClient cloudClient;
+    private CloudClient cloudClient;
     private List<TiSensorTag> tiSensorTagList;
     private BluetoothService bluetoothService;
     private BluetoothAdapter bluetoothAdapter;
@@ -70,9 +70,9 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
 
     private int period = 10;
     private int scantime = 5;
-    private static String topic = "data";
+    private String topic = "data";
     private long startTime;
-    // private boolean connected = false;
+    private boolean connected = false;
     private String iname = "hci0";
     private boolean enableScan = false;
     private boolean enableTemp = false;
@@ -141,7 +141,7 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
                         logger.info("Bluetooth adapter address => " + this.bluetoothAdapter.getAddress());
                     }
                     this.startTime = 0;
-                    // this.connected = false;
+                    this.connected = false;
                     this.handle = this.worker.scheduleAtFixedRate(new Runnable() {
 
                         @Override
@@ -245,7 +245,7 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
                         logger.info("Bluetooth adapter address => " + this.bluetoothAdapter.getAddress());
                     }
                     this.startTime = 0;
-                    // this.connected = false;
+                    this.connected = false;
                     this.handle = this.worker.scheduleAtFixedRate(new Runnable() {
 
                         @Override
@@ -348,7 +348,7 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
         }
     }
 
-    protected static void doPublishKeys(String address, Object key) {
+    protected void doPublishKeys(String address, Object key) {
         KuraPayload payload = new KuraPayload();
         payload.setTimestamp(new Date());
         payload.addMetric("key", key);
@@ -479,13 +479,13 @@ public class BluetoothLe implements ConfigurableComponent, CloudClientListener, 
             Boolean connected;
             if (!myTiSensorTag.isConnected()) {
                 logger.info("Connecting to TiSensorTag...");
-                connected = myTiSensorTag.connect(this.iname);
+                this.connected = myTiSensorTag.connect(this.iname);
             } else {
                 logger.info("TiSensorTag already connected!");
-                connected = true;
+                this.connected = true;
             }
 
-            if (connected) {
+            if (this.connected) {
 
                 KuraPayload payload = new KuraPayload();
                 payload.setTimestamp(new Date());
