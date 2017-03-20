@@ -19,15 +19,9 @@ import org.eclipse.kura.bluetooth.BluetoothGattCharacteristic;
 import org.eclipse.kura.bluetooth.BluetoothGattCharacteristicProperties;
 import org.eclipse.kura.bluetooth.BluetoothGattDescriptor;
 import org.eclipse.kura.bluetooth.BluetoothLeNotificationListener;
-<<<<<<< HEAD
-=======
-
-import tinyb.BluetoothNotification;
->>>>>>> 71c632e9b191017bc2d6a0b0bf9c1e79552455c1
 
 import tinyb.BluetoothNotification;
 
-<<<<<<< HEAD
 public class BluetoothGattCharacteristicImpl implements BluetoothGattCharacteristic {
 
     // If we want to implement a GATT server, we should remove the finals... and implement the setters.
@@ -49,43 +43,6 @@ public class BluetoothGattCharacteristicImpl implements BluetoothGattCharacteris
         this.valueHandle = "0000";
         this.descriptors = convertBluetoothGattDescriptors(characteristic.getDescriptors());
         this.characteristic = characteristic;
-=======
-    // If we want to implement a GATT server, we should remove the finals... and implement the setters.
-    private final UUID uuid;
-    private final String handle;
-    private final List<BluetoothGattCharacteristicProperties> properties;
-    private final String valueHandle;
-    private final List<BluetoothGattDescriptor> descriptors;
-    private final tinyb.BluetoothGattCharacteristic characteristic;
-    private BluetoothLeNotificationListener listener;
-
-    public BluetoothGattCharacteristicImpl(tinyb.BluetoothGattCharacteristic characteristic) {
-        this.uuid = UUID.fromString(characteristic.getUUID());
-        this.handle = characteristic.getCharacteristicHandle();
-        this.properties = new ArrayList<>();
-        for (String property : characteristic.getFlags()) {
-            this.properties.add(BluetoothGattCharacteristicProperties.getProperty(property));
-        }
-        this.valueHandle = "0000";
-        this.descriptors = convertBluetoothGattDescriptors(characteristic.getDescriptors());
-        this.characteristic = characteristic;
-    }
-
-    public void setBluetoothLeNotificationListener(BluetoothLeNotificationListener listener) {
-        this.listener = listener;
-        BluetoothNotification<byte[]> notification = value -> BluetoothGattCharacteristicImpl.this.listener
-                .onDataReceived(BluetoothGattCharacteristicImpl.this.handle, toHexString(value));
-        this.characteristic.enableValueNotifications(notification);
-    }
-
-    public void unsetBluetoothLeNotificationListener() {
-        this.listener = null;
-        this.characteristic.disableValueNotifications();
-    }
-
-    public BluetoothLeNotificationListener getBluetoothLeNotificationListener() {
-        return this.listener;
->>>>>>> 71c632e9b191017bc2d6a0b0bf9c1e79552455c1
     }
 
     // --------------------------------------------------------------------
@@ -109,7 +66,6 @@ public class BluetoothGattCharacteristicImpl implements BluetoothGattCharacteris
             writeValue((byte[]) value);
         }
     }
-<<<<<<< HEAD
 
     @Override
     public byte[] readValue() {
@@ -117,15 +73,6 @@ public class BluetoothGattCharacteristicImpl implements BluetoothGattCharacteris
     }
 
     @Override
-=======
-
-    @Override
-    public byte[] readValue() {
-        return this.characteristic.readValue();
-    }
-
-    @Override
->>>>>>> 71c632e9b191017bc2d6a0b0bf9c1e79552455c1
     public void writeValue(byte[] value) {
         this.characteristic.writeValue(value);
     }
@@ -170,7 +117,6 @@ public class BluetoothGattCharacteristicImpl implements BluetoothGattCharacteris
             }
         }
         return descriptor;
-<<<<<<< HEAD
     }
 
     @Override
@@ -196,14 +142,6 @@ public class BluetoothGattCharacteristicImpl implements BluetoothGattCharacteris
         return this.characteristic;
     }
 
-=======
-    }
-
-    public tinyb.BluetoothGattCharacteristic getCharacteristic() {
-        return this.characteristic;
-    }
-
->>>>>>> 71c632e9b191017bc2d6a0b0bf9c1e79552455c1
     // --------------------------------------------------------------------
     //
     // Private Methods
