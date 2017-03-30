@@ -34,6 +34,7 @@ import org.eclipse.kura.KuraTimeoutException;
 import org.eclipse.kura.KuraTooManyInflightMessagesException;
 import org.eclipse.kura.configuration.ConfigurableComponent;
 import org.eclipse.kura.configuration.ConfigurationService;
+import org.eclipse.kura.core.data.internal.TokenBucket;
 import org.eclipse.kura.core.data.store.DbDataStore;
 import org.eclipse.kura.data.DataService;
 import org.eclipse.kura.data.DataTransportService;
@@ -65,6 +66,8 @@ public class DataServiceImpl
     private static final String REPUBLISH_IN_FLIGHT_MSGS_PROP_NAME = "in-flight-messages.republish-on-new-session";
     private static final String MAX_IN_FLIGHT_MSGS_PROP_NAME = "in-flight-messages.max-number";
     private static final String IN_FLIGHT_MSGS_CONGESTION_TIMEOUT_PROP_NAME = "in-flight-messages.congestion-timeout";
+    private static final String PUBLISH_RATE = "max.publish.rate";
+    private static final String BURST_LENGTH = "max.publish.burst.length";
 
     private final Map<String, Object> properties = new HashMap<String, Object>();
 
@@ -88,6 +91,8 @@ public class DataServiceImpl
     private CloudConnectionStatusService cloudConnectionStatusService;
     private CloudConnectionStatusEnum notificationStatus = CloudConnectionStatusEnum.OFF;
 
+    private TokenBucket throttle;
+
     // ----------------------------------------------------------------
     //
     // Activation APIs
@@ -103,6 +108,14 @@ public class DataServiceImpl
         this.congestionExecutor = Executors.newSingleThreadScheduledExecutor();
 
         this.properties.putAll(properties);
+
+        if (this.properties.get(PUBLISH_RATE) != null && this.properties.get(BURST_LENGTH) != null) {
+            logger.info("Get Throttle with burst length {} and rate limit {}", (long) this.properties.get(BURST_LENGTH),
+                    (double) this.properties.get(PUBLISH_RATE));
+            long publishPeriod = (double) this.properties.get(PUBLISH_RATE) <= 0.0 ? 0L
+                    : (long) (1000 / ((double) this.properties.get(PUBLISH_RATE)));
+            throttle = new TokenBucket((long) this.properties.get(BURST_LENGTH), publishPeriod);
+        }
 
         String[] parts = pid.split("-");
         String table = "ds_messages";
@@ -155,6 +168,19 @@ public class DataServiceImpl
 
         this.properties.clear();
         this.properties.putAll(properties);
+
+        if (this.properties.get(PUBLISH_RATE) != null && this.properties.get(BURST_LENGTH) != null) {
+            logger.info("Get Throttle with burst length {} and rate limit {}", (long) this.properties.get(BURST_LENGTH),
+                    (double) this.properties.get(PUBLISH_RATE));
+            long publishPeriod = (double) this.properties.get(PUBLISH_RATE) <= 0.0 ? 0L
+                    : (long) (1000 / ((double) this.properties.get(PUBLISH_RATE)));
+            if (this.throttle == null) {
+                this.throttle = new TokenBucket((long) this.properties.get(BURST_LENGTH), publishPeriod);
+            } else {
+                this.throttle.setCapacity((long) this.properties.get(BURST_LENGTH));
+                this.throttle.setRefillPeriod(publishPeriod);
+            }
+        }
 
         this.store.update((Integer) this.properties.get(STORE_HOUSEKEEPER_INTERVAL_PROP_NAME),
                 (Integer) this.properties.get(STORE_PURGE_AGE_PROP_NAME),
@@ -572,14 +598,7 @@ public class DataServiceImpl
                             }
                         }
 
-                        publishInternal(message);
-
-                        // TODO: add a 'message throttle' configuration parameter to
-                        // slow down publish rate?
-
-                        // Notify the listeners
-                        DataServiceImpl.this.dataServiceListeners.onMessagePublished(message.getId(),
-                                message.getTopic());
+                        tryPublishInternal(message);
                     }
                 } catch (KuraConnectException e) {
                     logger.info("DataPublisherService is not connected", e);
@@ -591,6 +610,15 @@ public class DataServiceImpl
                 }
             }
         });
+    }
+
+    private synchronized void tryPublishInternal(DataMessage message) throws KuraException {
+        if (this.throttle.getToken()) {
+            logger.debug("Throttle: got token - remaining token {}", this.throttle.getRemainingTokens());
+            publishInternal(message);
+            // Notify the listeners
+            DataServiceImpl.this.dataServiceListeners.onMessagePublished(message.getId(), message.getTopic());
+        }
     }
 
     // It's very important that the publishInternal and messageConfirmed methods are synchronized
