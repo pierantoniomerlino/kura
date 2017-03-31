@@ -109,13 +109,7 @@ public class DataServiceImpl
 
         this.properties.putAll(properties);
 
-        if (this.properties.get(PUBLISH_RATE) != null && this.properties.get(BURST_LENGTH) != null) {
-            logger.info("Get Throttle with burst length {} and rate limit {}", (long) this.properties.get(BURST_LENGTH),
-                    (double) this.properties.get(PUBLISH_RATE));
-            long publishPeriod = (double) this.properties.get(PUBLISH_RATE) <= 0.0 ? 0L
-                    : (long) (1000 / ((double) this.properties.get(PUBLISH_RATE)));
-            throttle = new TokenBucket((long) this.properties.get(BURST_LENGTH), publishPeriod);
-        }
+        getThrottle();
 
         String[] parts = pid.split("-");
         String table = "ds_messages";
@@ -169,18 +163,7 @@ public class DataServiceImpl
         this.properties.clear();
         this.properties.putAll(properties);
 
-        if (this.properties.get(PUBLISH_RATE) != null && this.properties.get(BURST_LENGTH) != null) {
-            logger.info("Get Throttle with burst length {} and rate limit {}", (long) this.properties.get(BURST_LENGTH),
-                    (double) this.properties.get(PUBLISH_RATE));
-            long publishPeriod = (double) this.properties.get(PUBLISH_RATE) <= 0.0 ? 0L
-                    : (long) (1000 / ((double) this.properties.get(PUBLISH_RATE)));
-            if (this.throttle == null) {
-                this.throttle = new TokenBucket((long) this.properties.get(BURST_LENGTH), publishPeriod);
-            } else {
-                this.throttle.setCapacity((long) this.properties.get(BURST_LENGTH));
-                this.throttle.setRefillPeriod(publishPeriod);
-            }
-        }
+        getThrottle();
 
         this.store.update((Integer) this.properties.get(STORE_HOUSEKEEPER_INTERVAL_PROP_NAME),
                 (Integer) this.properties.get(STORE_PURGE_AGE_PROP_NAME),
@@ -550,6 +533,21 @@ public class DataServiceImpl
             this.cloudConnectionStatusService.updateStatus(this, CloudConnectionStatusEnum.OFF);
         }
         return autoConnect;
+    }
+
+    private void getThrottle() {
+        if (this.properties.get(PUBLISH_RATE) != null && this.properties.get(BURST_LENGTH) != null) {
+            logger.info("Get Throttle with burst length {} and rate limit {}", (long) this.properties.get(BURST_LENGTH),
+                    (double) this.properties.get(PUBLISH_RATE));
+            long publishPeriod = (double) this.properties.get(PUBLISH_RATE) <= 0.0 ? 0L
+                    : (long) (1000 / ((double) this.properties.get(PUBLISH_RATE)));
+            if (this.throttle == null) {
+                this.throttle = new TokenBucket((long) this.properties.get(BURST_LENGTH), publishPeriod);
+            } else {
+                this.throttle.setCapacity((long) this.properties.get(BURST_LENGTH));
+                this.throttle.setRefillPeriod(publishPeriod);
+            }
+        }
     }
 
     private void stopReconnectTask() {
