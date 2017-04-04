@@ -48,6 +48,7 @@ public class BluetoothDeviceImpl implements BluetoothDevice {
 
     @Override
     public int getType() {
+        // BluetoothDevice.getBluetoothClass() 0 -> ble !=0 -> no-ble
         return 0;
     }
 
