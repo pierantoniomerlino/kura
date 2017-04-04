@@ -101,13 +101,24 @@
 
         <AD id="max.publish.rate"
             name="Maximum publish rate"
-            type="Double"
+            type="Integer"
             cardinality="0"
             required="true"
-            default="0.0"
-            min="0.0"
-            description="The maximum number of message published in a second. If set to 0 the rate limit is disabled."/>
-            
+            default="0"
+            min="0"
+            description="The maximum message publish rate. The unit of measurement is set by the publish rate unit of measurement option. If set to 0 the rate limit is disabled."/>
+        
+        <AD id="max.publish.rate.unit"
+            name="Publish rate unit of measurement"
+            type="String"
+            cardinality="0" 
+            required="true"
+            default="messages.second"
+            description="">
+           <Option label="Messages/second" value="messages.second"/>
+           <Option label="Messages/minute" value="message.minute"/>          
+        </AD>
+        
         <AD id="max.publish.burst.length"
             name="Maximum number of messages in publish bursts"
             type="Long"

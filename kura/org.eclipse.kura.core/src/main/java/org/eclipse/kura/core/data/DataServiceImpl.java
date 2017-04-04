@@ -67,6 +67,7 @@ public class DataServiceImpl
     private static final String MAX_IN_FLIGHT_MSGS_PROP_NAME = "in-flight-messages.max-number";
     private static final String IN_FLIGHT_MSGS_CONGESTION_TIMEOUT_PROP_NAME = "in-flight-messages.congestion-timeout";
     private static final String PUBLISH_RATE = "max.publish.rate";
+    private static final String PUBLISH_RATE_UNIT = "max.publish.rate.unit";
     private static final String BURST_LENGTH = "max.publish.burst.length";
 
     private final Map<String, Object> properties = new HashMap<String, Object>();
@@ -537,10 +538,16 @@ public class DataServiceImpl
 
     private void getThrottle() {
         if (this.properties.get(PUBLISH_RATE) != null && this.properties.get(BURST_LENGTH) != null) {
-            logger.info("Get Throttle with burst length {} and rate limit {}", (long) this.properties.get(BURST_LENGTH),
-                    (double) this.properties.get(PUBLISH_RATE));
-            long publishPeriod = (double) this.properties.get(PUBLISH_RATE) <= 0.0 ? 0L
-                    : (long) (1000 / ((double) this.properties.get(PUBLISH_RATE)));
+            logger.info("Get Throttle with burst length {} and rate limit {} {}",
+                    (long) this.properties.get(BURST_LENGTH), (int) this.properties.get(PUBLISH_RATE),
+                    ((String) this.properties.get(PUBLISH_RATE_UNIT)).replace(".", "/"));
+            String unit = (String) this.properties.get(PUBLISH_RATE_UNIT);
+            long publishPeriod = 0L;
+            if ((int) this.properties.get(PUBLISH_RATE) != 0 && "messages.second".equals(unit)) {
+                publishPeriod = (long) (1000 / ((int) this.properties.get(PUBLISH_RATE)));
+            } else if ((int) this.properties.get(PUBLISH_RATE) != 0 && "messages.minute".equals(unit)) {
+                publishPeriod = (long) (60000 / ((int) this.properties.get(PUBLISH_RATE)));
+            }
             if (this.throttle == null) {
                 this.throttle = new TokenBucket((long) this.properties.get(BURST_LENGTH), publishPeriod);
             } else {
