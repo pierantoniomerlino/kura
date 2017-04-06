@@ -224,7 +224,7 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
     public void setTermometerPeriod(int period) {
         byte[] periodBytes = ByteBuffer.allocate(4).putInt(period).array();
         this.services.get(TiSensorTagGatt.UUID_TEMP_SENSOR_SERVICE)
-                .getCharacteristic(TiSensorTagGatt.UUID_ACC_SENSOR_PERIOD).writeValue(periodBytes);
+                .getCharacteristic(TiSensorTagGatt.UUID_TEMP_SENSOR_PERIOD).writeValue(periodBytes);
     }
 
     /*
@@ -283,17 +283,19 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
      */
     public void enableAccelerometer(String config) {
 
+        byte[] value = hexStringToByteArray(config);
         if (this.isCC2650) {
             // 0: gyro X, 1: gyro Y, 2: gyro Z
             // 3: acc X, 4: acc Y, 5: acc Z
             // 6: mag
             // 7: wake-on-motion
             // 8-9: acc range (0 : 2g, 1 : 4g, 2 : 8g, 3 : 16g)
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_MOV_SENSOR_ENABLE_2650, config);
+            this.services.get(MOVEMENT).getCharacteristic(TiSensorTagGatt.UUID_MOV_SENSOR_SERVICE).writeValue(value);
         } else {
             // Write "01" in order to enable the sensor in 2g range
             // Write "01" in order to select 2g range, "02" for 4g, "03" for 8g (only for firmware > 1.5)
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_ACC_SENSOR_ENABLE_2541, config);
+            this.services.get(ACCELEROMETER).getCharacteristic(TiSensorTagGatt.UUID_ACC_SENSOR_SERVICE)
+                    .writeValue(value);
         }
     }
 
@@ -303,10 +305,13 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
     public void disableAccelerometer() {
         if (this.isCC2650) {
             // Write "0000" to disable accelerometer sensor
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_MOV_SENSOR_ENABLE_2650, "0000");
+            byte[] value = { 0x00, 0x00 };
+            this.services.get(MOVEMENT).getCharacteristic(TiSensorTagGatt.UUID_MOV_SENSOR_SERVICE).writeValue(value);
         } else {
             // Write "00" to disable accelerometer sensor
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_ACC_SENSOR_ENABLE_2541, "00");
+            byte[] value = { 0x00 };
+            this.services.get(ACCELEROMETER).getCharacteristic(TiSensorTagGatt.UUID_ACC_SENSOR_SERVICE)
+                    .writeValue(value);
         }
     }
 
@@ -325,7 +330,7 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
                         this.bluetoothGattClient.readCharacteristicValue(TiSensorTagGatt.HANDLE_ACC_SENSOR_VALUE_2541));
             }
         } catch (KuraException e) {
-            logger.error(e.toString());
+            logger.error("Failed to read acceleration", e);
         }
         return acceleration;
     }
@@ -335,16 +340,14 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
      */
     public double[] readAccelerationByUuid() {
         double[] acceleration = new double[3];
-        try {
-            if (this.isCC2650) {
-                return calculateAcceleration(
-                        this.bluetoothGattClient.readCharacteristicValueByUuid(TiSensorTagGatt.UUID_MOV_SENSOR_VALUE));
-            } else {
-                return calculateAcceleration(
-                        this.bluetoothGattClient.readCharacteristicValueByUuid(TiSensorTagGatt.UUID_ACC_SENSOR_VALUE));
-            }
-        } catch (KuraException e) {
-            logger.error(e.toString());
+        if (this.isCC2650) {
+            byte[] movement = this.bluetoothGattClient.getService(TiSensorTagGatt.UUID_MOV_SENSOR_SERVICE)
+                    .getCharacteristic(TiSensorTagGatt.UUID_MOV_SENSOR_VALUE).readValue();
+            acceleration = calculateAcceleration(toHexString(movement));
+        } else {
+            byte[] acc = this.bluetoothGattClient.getService(TiSensorTagGatt.UUID_ACC_SENSOR_SERVICE)
+                    .getCharacteristic(TiSensorTagGatt.UUID_ACC_SENSOR_VALUE).readValue();
+            acceleration = calculateAcceleration(toHexString(acc));
         }
         return acceleration;
     }
@@ -352,14 +355,13 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
     /*
      * Enable accelerometer notifications
      */
-    public void enableAccelerationNotifications() {
-        // Write "01:00 to enable notifications
+    public void enableAccelerationNotifications(BluetoothLeNotificationListener listener) {
         if (this.isCC2650) {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_MOV_SENSOR_NOTIFICATION_2650,
-                    "01:00");
+            this.services.get(MOVEMENT).getCharacteristic(TiSensorTagGatt.UUID_MOV_SENSOR_VALUE)
+                    .setBluetoothLeNotificationListener(listener);
         } else {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_ACC_SENSOR_NOTIFICATION_2541,
-                    "01:00");
+            this.services.get(ACCELEROMETER).getCharacteristic(TiSensorTagGatt.UUID_ACC_SENSOR_VALUE)
+                    .setBluetoothLeNotificationListener(listener);
         }
     }
 
@@ -367,24 +369,26 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
      * Disable accelerometer notifications
      */
     public void disableAccelerationNotifications() {
-        // Write "00:00 to disable notifications
         if (this.isCC2650) {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_MOV_SENSOR_NOTIFICATION_2650,
-                    "00:00");
+            this.services.get(MOVEMENT).getCharacteristic(TiSensorTagGatt.UUID_MOV_SENSOR_VALUE)
+                    .unsetBluetoothLeNotificationListener();
         } else {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_ACC_SENSOR_NOTIFICATION_2541,
-                    "00:00");
+            this.services.get(ACCELEROMETER).getCharacteristic(TiSensorTagGatt.UUID_ACC_SENSOR_VALUE)
+                    .unsetBluetoothLeNotificationListener();
         }
     }
 
     /*
      * Set sampling period
      */
-    public void setAccelerometerPeriod(String period) {
+    public void setAccelerometerPeriod(int period) {
+        byte[] periodBytes = ByteBuffer.allocate(4).putInt(period).array();
         if (this.isCC2650) {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_MOV_SENSOR_PERIOD_2650, period);
+            this.services.get(TiSensorTagGatt.UUID_MOV_SENSOR_SERVICE)
+                    .getCharacteristic(TiSensorTagGatt.UUID_MOV_SENSOR_PERIOD).writeValue(periodBytes);
         } else {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_ACC_SENSOR_PERIOD_2541, period);
+            this.services.get(TiSensorTagGatt.UUID_ACC_SENSOR_SERVICE)
+                    .getCharacteristic(TiSensorTagGatt.UUID_ACC_SENSOR_PERIOD).writeValue(periodBytes);
         }
     }
 
@@ -431,24 +435,16 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
      * Enable humidity sensor
      */
     public void enableHygrometer() {
-        // Write "01" to enable humidity sensor
-        if (this.isCC2650) {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_HUM_SENSOR_ENABLE_2650, "01");
-        } else {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_HUM_SENSOR_ENABLE_2541, "01");
-        }
+        byte[] value = { 0x01 };
+        this.services.get(HUMIDITY).getCharacteristic(TiSensorTagGatt.UUID_HUM_SENSOR_ENABLE).writeValue(value);
     }
 
     /*
      * Disable humidity sensor
      */
     public void disableHygrometer() {
-        // Write "00" to disable humidity sensor
-        if (this.isCC2650) {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_HUM_SENSOR_ENABLE_2650, "00");
-        } else {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_HUM_SENSOR_ENABLE_2541, "00");
-        }
+        byte[] value = { 0x00 };
+        this.services.get(HUMIDITY).getCharacteristic(TiSensorTagGatt.UUID_HUM_SENSOR_ENABLE).writeValue(value);
     }
 
     /*
@@ -466,7 +462,7 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
                         this.bluetoothGattClient.readCharacteristicValue(TiSensorTagGatt.HANDLE_HUM_SENSOR_VALUE_2541));
             }
         } catch (KuraException e) {
-            logger.error(e.toString());
+            logger.error("Failed to read humidity", e);
         }
         return humidity;
     }
@@ -475,49 +471,34 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
      * Read humidity sensor by UUID
      */
     public float readHumidityByUuid() {
-        float humidity = 0F;
-        try {
-            humidity = calculateHumidity(
-                    this.bluetoothGattClient.readCharacteristicValueByUuid(TiSensorTagGatt.UUID_HUM_SENSOR_VALUE));
-        } catch (KuraException e) {
-            logger.error(e.toString());
-        }
-        return humidity;
+        byte[] humidity = this.bluetoothGattClient.getService(TiSensorTagGatt.UUID_HUM_SENSOR_SERVICE)
+                .getCharacteristic(TiSensorTagGatt.UUID_HUM_SENSOR_VALUE).readValue();
+        return calculateHumidity(toHexString(humidity));
     }
 
     /*
      * Enable humidity notifications
      */
-    public void enableHumidityNotifications() {
-        // Write "01:00 to 0x39 to enable notifications
-        if (this.isCC2650) {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_HUM_SENSOR_NOTIFICATION_2650,
-                    "01:00");
-        } else {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_HUM_SENSOR_NOTIFICATION_2541,
-                    "01:00");
-        }
+    public void enableHumidityNotifications(BluetoothLeNotificationListener listener) {
+        this.services.get(HUMIDITY).getCharacteristic(TiSensorTagGatt.UUID_HUM_SENSOR_VALUE)
+                .setBluetoothLeNotificationListener(listener);
     }
 
     /*
      * Disable humidity notifications
      */
     public void disableHumidityNotifications() {
-        // Write "00:00 to 0x39 to enable notifications
-        if (this.isCC2650) {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_HUM_SENSOR_NOTIFICATION_2650,
-                    "00:00");
-        } else {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_HUM_SENSOR_NOTIFICATION_2541,
-                    "00:00");
-        }
+        this.services.get(HUMIDITY).getCharacteristic(TiSensorTagGatt.UUID_HUM_SENSOR_VALUE)
+                .unsetBluetoothLeNotificationListener();
     }
 
     /*
      * Set sampling period (for CC2650 only)
      */
-    public void setHygrometerPeriod(String period) {
-        this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_HUM_SENSOR_PERIOD_2650, period);
+    public void setHygrometerPeriod(int period) {
+        byte[] periodBytes = ByteBuffer.allocate(4).putInt(period).array();
+        this.services.get(TiSensorTagGatt.UUID_HUM_SENSOR_SERVICE)
+                .getCharacteristic(TiSensorTagGatt.UUID_HUM_SENSOR_PERIOD).writeValue(periodBytes);
     }
 
     /*
@@ -551,11 +532,13 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
      * Enable magnetometer sensor
      */
     public void enableMagnetometer(String config) {
+        byte[] value = hexStringToByteArray(config);
         if (this.isCC2650) {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_MOV_SENSOR_ENABLE_2650, config);
+            this.services.get(MOVEMENT).getCharacteristic(TiSensorTagGatt.UUID_MOV_SENSOR_SERVICE).writeValue(value);
         } else {
             // Write "01" enable magnetometer sensor
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_MAG_SENSOR_ENABLE_2541, "01");
+            this.services.get(MAGNETOMETER).getCharacteristic(TiSensorTagGatt.UUID_MAG_SENSOR_SERVICE)
+                    .writeValue(value);
         }
     }
 
@@ -565,10 +548,13 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
     public void disableMagnetometer() {
         if (this.isCC2650) {
             // Write "0000" to disable magnetometer sensor
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_MOV_SENSOR_ENABLE_2650, "0000");
+            byte[] value = { 0x00, 0x00 };
+            this.services.get(MOVEMENT).getCharacteristic(TiSensorTagGatt.UUID_MOV_SENSOR_SERVICE).writeValue(value);
         } else {
             // Write "00" to disable magnetometer sensor
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_MAG_SENSOR_ENABLE_2541, "00");
+            byte[] value = { 0x00 };
+            this.services.get(MAGNETOMETER).getCharacteristic(TiSensorTagGatt.UUID_MAG_SENSOR_SERVICE)
+                    .writeValue(value);
         }
     }
 
@@ -587,7 +573,7 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
                         this.bluetoothGattClient.readCharacteristicValue(TiSensorTagGatt.HANDLE_MAG_SENSOR_VALUE_2541));
             }
         } catch (KuraException e) {
-            logger.error(e.toString());
+            logger.error("Failed to read magnetometer", e);
         }
         return magnetic;
     }
@@ -597,16 +583,14 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
      */
     public float[] readMagneticFieldByUuid() {
         float[] magnetic = new float[3];
-        try {
-            if (this.isCC2650) {
-                magnetic = calculateMagneticField(
-                        this.bluetoothGattClient.readCharacteristicValueByUuid(TiSensorTagGatt.UUID_MOV_SENSOR_VALUE));
-            } else {
-                magnetic = calculateMagneticField(
-                        this.bluetoothGattClient.readCharacteristicValueByUuid(TiSensorTagGatt.UUID_MAG_SENSOR_VALUE));
-            }
-        } catch (KuraException e) {
-            logger.error(e.toString());
+        if (this.isCC2650) {
+            byte[] movement = this.bluetoothGattClient.getService(TiSensorTagGatt.UUID_MOV_SENSOR_SERVICE)
+                    .getCharacteristic(TiSensorTagGatt.UUID_MOV_SENSOR_VALUE).readValue();
+            magnetic = calculateMagneticField(toHexString(movement));
+        } else {
+            byte[] mag = this.bluetoothGattClient.getService(TiSensorTagGatt.UUID_MAG_SENSOR_SERVICE)
+                    .getCharacteristic(TiSensorTagGatt.UUID_MAG_SENSOR_VALUE).readValue();
+            magnetic = calculateMagneticField(toHexString(mag));
         }
         return magnetic;
     }
@@ -614,14 +598,13 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
     /*
      * Enable magnetometer notifications
      */
-    public void enableMagneticFieldNotifications() {
-        // Write "01:00 to enable notifications
+    public void enableMagneticFieldNotifications(BluetoothLeNotificationListener listener) {
         if (this.isCC2650) {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_MOV_SENSOR_NOTIFICATION_2650,
-                    "01:00");
+            this.services.get(MOVEMENT).getCharacteristic(TiSensorTagGatt.UUID_MOV_SENSOR_VALUE)
+                    .setBluetoothLeNotificationListener(listener);
         } else {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_MAG_SENSOR_NOTIFICATION_2541,
-                    "01:00");
+            this.services.get(MAGNETOMETER).getCharacteristic(TiSensorTagGatt.UUID_MAG_SENSOR_VALUE)
+                    .setBluetoothLeNotificationListener(listener);
         }
     }
 
@@ -629,24 +612,26 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
      * Disable magnetometer notifications
      */
     public void disableMagneticFieldNotifications() {
-        // Write "00:00 to enable notifications
         if (this.isCC2650) {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_MOV_SENSOR_NOTIFICATION_2650,
-                    "00:00");
+            this.services.get(MOVEMENT).getCharacteristic(TiSensorTagGatt.UUID_MOV_SENSOR_VALUE)
+                    .unsetBluetoothLeNotificationListener();
         } else {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_MAG_SENSOR_NOTIFICATION_2541,
-                    "00:00");
+            this.services.get(MAGNETOMETER).getCharacteristic(TiSensorTagGatt.UUID_MAG_SENSOR_VALUE)
+                    .unsetBluetoothLeNotificationListener();
         }
     }
 
     /*
      * Set sampling period
      */
-    public void setMagnetometerPeriod(String period) {
+    public void setMagnetometerPeriod(int period) {
+        byte[] periodBytes = ByteBuffer.allocate(4).putInt(period).array();
         if (this.isCC2650) {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_MOV_SENSOR_PERIOD_2650, period);
+            this.services.get(TiSensorTagGatt.UUID_MOV_SENSOR_SERVICE)
+                    .getCharacteristic(TiSensorTagGatt.UUID_MOV_SENSOR_PERIOD).writeValue(periodBytes);
         } else {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_MAG_SENSOR_PERIOD_2541, period);
+            this.services.get(TiSensorTagGatt.UUID_MAG_SENSOR_SERVICE)
+                    .getCharacteristic(TiSensorTagGatt.UUID_MAG_SENSOR_PERIOD).writeValue(periodBytes);
         }
     }
 
@@ -695,18 +680,9 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
      * Enable pressure sensor
      */
     public void enableBarometer() {
-        // Write "01" enable pressure sensor
-        if (this.isCC2650) {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_PRE_SENSOR_ENABLE_2650, "01");
-        } else {
-            if (this.firmwareRevision.contains("1.4")) {
-                this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_PRE_SENSOR_ENABLE_2541_1_4,
-                        "01");
-            } else {
-                this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_PRE_SENSOR_ENABLE_2541_1_5,
-                        "01");
-            }
-        }
+        // Write "01" to enable pressure sensor
+        byte[] value = { 0x01 };
+        this.services.get(PRESSURE).getCharacteristic(TiSensorTagGatt.UUID_PRE_SENSOR_ENABLE).writeValue(value);
     }
 
     /*
@@ -714,17 +690,8 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
      */
     public void disableBarometer() {
         // Write "00" to disable pressure sensor
-        if (this.isCC2650) {
-            this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_PRE_SENSOR_ENABLE_2650, "00");
-        } else {
-            if (this.firmwareRevision.contains("1.4")) {
-                this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_PRE_SENSOR_ENABLE_2541_1_4,
-                        "00");
-            } else {
-                this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_PRE_SENSOR_ENABLE_2541_1_5,
-                        "00");
-            }
-        }
+        byte[] value = { 0x00 };
+        this.services.get(PRESSURE).getCharacteristic(TiSensorTagGatt.UUID_PRE_SENSOR_ENABLE).writeValue(value);
     }
 
     /*
@@ -732,21 +699,18 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
      */
     public void calibrateBarometer() {
         // Write "02" to calibrate pressure sensor
-        if (!this.isCC2650) {
-            if (this.firmwareRevision.contains("1.4")) {
-                this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_PRE_SENSOR_ENABLE_2541_1_4,
-                        "02");
-            } else {
-                this.bluetoothGattClient.writeCharacteristicValue(TiSensorTagGatt.HANDLE_PRE_SENSOR_ENABLE_2541_1_5,
-                        "02");
-            }
-        }
+        byte[] value = { 0x02 };
+        this.services.get(PRESSURE).getCharacteristic(TiSensorTagGatt.UUID_PRE_SENSOR_ENABLE).writeValue(value);
     }
 
     /*
      * Read calibration pressure sensor
      */
     public String readCalibrationBarometer() {
+        byte[] pressure = this.bluetoothGattClient.getService(TiSensorTagGatt.UUID_PRE_SENSOR_SERVICE)
+                .getCharacteristic(TiSensorTagGatt.UUID_PRE_SENSOR_VALUE).readValue();
+        return calculatePressure(toHexString(pressure));
+
         this.pressureCalibration = "";
         // Read value
         try {
@@ -760,7 +724,7 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
                 }
             }
         } catch (KuraException e) {
-            logger.error(e.toString());
+            logger.error("Failed to read pressure", e);
         }
         return this.pressureCalibration;
     }
@@ -1424,13 +1388,13 @@ public class TiSensorTag implements BluetoothLeNotificationListener {
         return output.toString();
     }
 
-    public static byte[] hexStringToByteArray(String s) {
-        int len = s.length();
-        byte[] data = new byte[len / 2];
-        for (int i = 0; i < len; i += 2) {
-            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i + 1), 16));
+    public static byte[] hexStringToByteArray(String stringValue) {
+        byte[] byteValue = new byte[stringValue.length() / 2];
+        for (int i = 0; i < stringValue.length(); i += 2) {
+            byteValue[i / 2] = (byte) ((Character.digit(stringValue.charAt(i), 16) << 4)
+                    + Character.digit(stringValue.charAt(i + 1), 16));
         }
-        return data;
+        return byteValue;
     }
 
     private static Integer shortSignedAtOffset(byte[] c, int offset) {

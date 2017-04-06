@@ -392,11 +392,11 @@ public class BluetoothGattImpl implements BluetoothGatt, BluetoothProcessListene
     }
 
     private byte[] toByteArray(String stringValue) {
-        byte[] data = new byte[stringValue.length() / 2];
+        byte[] byteValue = new byte[stringValue.length() / 2];
         for (int i = 0; i < stringValue.length(); i += 2) {
-            data[i / 2] = (byte) ((Character.digit(stringValue.charAt(i), 16) << 4)
+            byteValue[i / 2] = (byte) ((Character.digit(stringValue.charAt(i), 16) << 4)
                     + Character.digit(stringValue.charAt(i + 1), 16));
         }
-        return data;
+        return byteValue;
     }
 }
