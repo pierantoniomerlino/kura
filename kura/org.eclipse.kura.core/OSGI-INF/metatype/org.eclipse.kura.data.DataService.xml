@@ -99,17 +99,17 @@
             min="0"
             description="Timeouts the in-flight messages congestion condition. The service will force a disconnect attempting to reconnect (0 to disable)."/>
 
-        <AD id="max.publish.rate"
-            name="Maximum publish rate"
+        <AD id="average.publish.rate"
+            name="Average publish rate"
             type="Integer"
             cardinality="0"
             required="true"
             default="0"
             min="0"
-            description="The maximum message publish rate. The unit of measurement is set by the publish rate unit of measurement option. If set to 0 the rate limit is disabled."/>
+            description="The average message publish rate. The unit of measurement is set by the publish rate unit of measurement option. If set to 0 the rate limit is disabled."/>
         
-        <AD id="max.publish.rate.unit"
-            name="Publish rate unit of measurement"
+        <AD id="average.publish.rate.unit"
+            name="publish rate unit of measurement"
             type="String"
             cardinality="0" 
             required="true"
@@ -119,14 +119,14 @@
            <Option label="Messages/minute" value="message.minute"/>          
         </AD>
         
-        <AD id="max.publish.burst.length"
-            name="Maximum number of messages in publish bursts"
+        <AD id="publish.burst.size"
+            name="Message burst size"
             type="Long"
             cardinality="0"
             required="true"
             default="0"
             min="0"
-            description="When the publish rate is set, this option enables the publishing of some burst of messages at maximum speed. If set to 0 the bursts are disabled."/>
+            description="When the average publish rate is set, this option enables the publishing of messages in bursts at maximum speed. If set to 0 the bursts are disabled."/>
                                     
     </OCD>
     <Designate pid="org.eclipse.kura.data.DataService" factoryPid="org.eclipse.kura.data.DataService">

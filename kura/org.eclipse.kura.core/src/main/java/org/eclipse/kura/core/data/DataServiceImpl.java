@@ -66,9 +66,9 @@ public class DataServiceImpl
     private static final String REPUBLISH_IN_FLIGHT_MSGS_PROP_NAME = "in-flight-messages.republish-on-new-session";
     private static final String MAX_IN_FLIGHT_MSGS_PROP_NAME = "in-flight-messages.max-number";
     private static final String IN_FLIGHT_MSGS_CONGESTION_TIMEOUT_PROP_NAME = "in-flight-messages.congestion-timeout";
-    private static final String PUBLISH_RATE = "max.publish.rate";
-    private static final String PUBLISH_RATE_UNIT = "max.publish.rate.unit";
-    private static final String BURST_LENGTH = "max.publish.burst.length";
+    private static final String PUBLISH_RATE = "average.publish.rate";
+    private static final String PUBLISH_RATE_UNIT = "average.publish.rate.unit";
+    private static final String BURST_SIZE = "publish.burst.size";
 
     private final Map<String, Object> properties = new HashMap<String, Object>();
 
@@ -537,21 +537,22 @@ public class DataServiceImpl
     }
 
     private void getThrottle() {
-        if (this.properties.get(PUBLISH_RATE) != null && this.properties.get(BURST_LENGTH) != null) {
-            logger.info("Get Throttle with burst length {} and rate limit {} {}",
-                    (long) this.properties.get(BURST_LENGTH), (int) this.properties.get(PUBLISH_RATE),
-                    ((String) this.properties.get(PUBLISH_RATE_UNIT)).replace(".", "/"));
+        if (this.properties.get(PUBLISH_RATE) != null && this.properties.get(BURST_SIZE) != null) {
+            int publishRate = (int) this.properties.get(PUBLISH_RATE);
+            long burstLength = (long) this.properties.get(BURST_SIZE);
             String unit = (String) this.properties.get(PUBLISH_RATE_UNIT);
+            logger.info("Get Throttle with burst length {} and rate limit {} {}", burstLength, publishRate,
+                    (unit.replace(".", "/")));
             long publishPeriod = 0L;
-            if ((int) this.properties.get(PUBLISH_RATE) != 0 && "messages.second".equals(unit)) {
-                publishPeriod = (long) (1000 / ((int) this.properties.get(PUBLISH_RATE)));
-            } else if ((int) this.properties.get(PUBLISH_RATE) != 0 && "messages.minute".equals(unit)) {
-                publishPeriod = (long) (60000 / ((int) this.properties.get(PUBLISH_RATE)));
+            if (publishRate != 0 && "messages.second".equals(unit)) {
+                publishPeriod = (long) (1000 / publishRate);
+            } else if (publishRate != 0 && "messages.minute".equals(unit)) {
+                publishPeriod = (long) (60000 / publishRate);
             }
             if (this.throttle == null) {
-                this.throttle = new TokenBucket((long) this.properties.get(BURST_LENGTH), publishPeriod);
+                this.throttle = new TokenBucket(burstLength, publishPeriod);
             } else {
-                this.throttle.setCapacity((long) this.properties.get(BURST_LENGTH));
+                this.throttle.setCapacity(burstLength);
                 this.throttle.setRefillPeriod(publishPeriod);
             }
         }
