@@ -67,7 +67,6 @@ public class DataServiceImpl
     private static final String MAX_IN_FLIGHT_MSGS_PROP_NAME = "in-flight-messages.max-number";
     private static final String IN_FLIGHT_MSGS_CONGESTION_TIMEOUT_PROP_NAME = "in-flight-messages.congestion-timeout";
     private static final String PUBLISH_RATE = "average.publish.rate";
-    private static final String PUBLISH_RATE_UNIT = "average.publish.rate.unit";
     private static final String BURST_SIZE = "publish.burst.size";
 
     private final Map<String, Object> properties = new HashMap<String, Object>();
@@ -538,16 +537,13 @@ public class DataServiceImpl
 
     private void createThrottle() {
         if (this.properties.get(PUBLISH_RATE) != null && this.properties.get(BURST_SIZE) != null) {
-            int publishRate = (int) this.properties.get(PUBLISH_RATE);
+            double publishRate = (double) this.properties.get(PUBLISH_RATE);
             int burstLength = (int) this.properties.get(BURST_SIZE);
-            String unit = (String) this.properties.get(PUBLISH_RATE_UNIT);
-            logger.info("Get Throttle with burst length {} and rate limit {} {}", burstLength, publishRate,
-                    unit.replace(".", "/"));
+            logger.info("Get Throttle with burst length {} and rate limit {} messages/second", burstLength,
+                    publishRate);
             int publishPeriod = 0;
-            if (publishRate != 0 && "messages.second".equals(unit)) {
-                publishPeriod = 1000 / publishRate;
-            } else if (publishRate != 0 && "messages.minute".equals(unit)) {
-                publishPeriod = 60000 / publishRate;
+            if (publishRate != 0) {
+                publishPeriod = (int) (1000 / publishRate);
             }
             this.throttle = new TokenBucket(burstLength, publishPeriod);
         }

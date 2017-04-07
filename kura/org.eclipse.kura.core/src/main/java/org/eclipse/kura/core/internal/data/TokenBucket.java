@@ -49,8 +49,7 @@ public class TokenBucket {
         if (this.refillPeriod == 0) {
             success = true;
         } else {
-            refill();
-            if (this.remainingTokens > 0) {
+            if (refill() > 0) {
                 this.remainingTokens--;
                 success = true;
             }
@@ -60,22 +59,21 @@ public class TokenBucket {
 
     public void waitForToken() throws InterruptedException {
         if (this.refillPeriod != 0) {
-            refill();
-            while (this.remainingTokens == 0) {
-                refill();
+            while (refill() == 0) {
                 Thread.sleep(100);
             }
             this.remainingTokens--;
         }
     }
 
-    private void refill() {
+    private int refill() {
         long now = System.currentTimeMillis();
         if (now - this.lastRefillTime >= this.refillPeriod) {
             this.remainingTokens = (int) Math.min(this.capacity,
                     this.remainingTokens + (now - this.lastRefillTime) / this.refillPeriod);
             this.lastRefillTime = now;
         }
+        return this.remainingTokens;
     }
 
 }
