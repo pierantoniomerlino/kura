@@ -114,14 +114,14 @@
             cardinality="0" 
             required="true"
             default="messages.second"
-            description="">
+            description="The measurement unit for the average publish rate.">
            <Option label="Messages/second" value="messages.second"/>
-           <Option label="Messages/minute" value="message.minute"/>          
+           <Option label="Messages/minute" value="messages.minute"/>          
         </AD>
         
         <AD id="publish.burst.size"
             name="Message burst size"
-            type="Long"
+            type="Integer"
             cardinality="0"
             required="true"
             default="0"
