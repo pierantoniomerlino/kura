@@ -19,6 +19,7 @@ import java.util.UUID;
 import org.eclipse.kura.KuraException;
 import org.eclipse.kura.bluetooth.BluetoothGatt;
 import org.eclipse.kura.bluetooth.BluetoothGattCharacteristic;
+import org.eclipse.kura.bluetooth.BluetoothGattSecurityLevel;
 import org.eclipse.kura.bluetooth.BluetoothGattService;
 import org.eclipse.kura.bluetooth.BluetoothLeNotificationListener;
 import org.eclipse.kura.linux.bluetooth.util.BluetoothProcessListener;
@@ -225,6 +226,23 @@ public class BluetoothGattImpl implements BluetoothGatt, BluetoothProcessListene
 
     @Override
     public void processInputStream(String string) {
+    }
+
+    @Override
+    public void processErrorStream(String string) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public BluetoothGattSecurityLevel getSecurityLevel() throws KuraException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setSecurityLevel(BluetoothGattSecurityLevel level) {
+        // TODO Auto-generated method stub
     }
 
     // --------------------------------------------------------------------
