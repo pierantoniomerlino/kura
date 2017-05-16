@@ -25,20 +25,25 @@ public interface BluetoothGattService {
     /*
      * Get characteristic based on UUID
      */
+    @Deprecated
     public BluetoothGattCharacteristic getCharacteristic(UUID uuid);
 
     /*
      * Get list of characteristics of the service
      */
+    @Deprecated
     public List<BluetoothGattCharacteristic> getCharacterisitcs();
 
     /*
      * Return the UUID of this service
      */
+    @Deprecated
     public UUID getUuid();
 
+    @Deprecated
     public String getStartHandle();
 
+    @Deprecated
     public String getEndHandle();
 
 }

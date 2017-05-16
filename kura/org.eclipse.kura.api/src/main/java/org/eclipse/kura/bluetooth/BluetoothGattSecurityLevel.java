@@ -12,6 +12,7 @@ public enum BluetoothGattSecurityLevel {
     HIGH,
     UNKNOWN;
 
+    @Deprecated
     public static BluetoothGattSecurityLevel getBluetoothGattSecurityLevel(String level) {
         if (LOW.name().equalsIgnoreCase(level)) {
             return LOW;

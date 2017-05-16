@@ -32,6 +32,7 @@ public interface BluetoothGatt {
      *
      * @return If connection was successful
      */
+    @Deprecated
     public boolean connect() throws KuraException;
 
     /**
@@ -42,11 +43,13 @@ public interface BluetoothGatt {
      * @return If connection was successful
      * @since 1.0.8
      */
+    @Deprecated
     public boolean connect(String adapterName) throws KuraException;
 
     /**
      * Disconnect from devices GATT server.
      */
+    @Deprecated
     public void disconnect();
 
     /**
@@ -54,6 +57,7 @@ public interface BluetoothGatt {
      *
      * @return If connection was successful
      */
+    @Deprecated
     public boolean checkConnection() throws KuraException;
 
     /**
@@ -63,6 +67,7 @@ public interface BluetoothGatt {
      * @param listener
      *            BluetoothLeListener
      */
+    @Deprecated
     public void setBluetoothLeNotificationListener(BluetoothLeNotificationListener listener);
 
     /**
@@ -72,6 +77,7 @@ public interface BluetoothGatt {
      *            UUID of service
      * @return BluetoothGattService
      */
+    @Deprecated
     public BluetoothGattService getService(UUID uuid);
 
     /**
@@ -79,6 +85,7 @@ public interface BluetoothGatt {
      *
      * @return List of services
      */
+    @Deprecated
     public List<BluetoothGattService> getServices();
 
     /**
@@ -91,6 +98,7 @@ public interface BluetoothGatt {
      *            End handle
      * @return List of GATT characteristics
      */
+    @Deprecated
     public List<BluetoothGattCharacteristic> getCharacteristics(String startHandle, String endHandle);
 
     /**
@@ -100,6 +108,7 @@ public interface BluetoothGatt {
      *            Characteristic handle
      * @return Characteristic value
      */
+    @Deprecated
     public String readCharacteristicValue(String handle) throws KuraException;
 
     /**
@@ -109,6 +118,7 @@ public interface BluetoothGatt {
      *            UUID of Characteristic
      * @return Characteristic value
      */
+    @Deprecated
     public String readCharacteristicValueByUuid(UUID uuid) throws KuraException;
 
     /**
@@ -119,6 +129,7 @@ public interface BluetoothGatt {
      * @param value
      *            Value to write to Characteristic
      */
+    @Deprecated
     public void writeCharacteristicValue(String handle, String value);
 
     /**
@@ -127,6 +138,7 @@ public interface BluetoothGatt {
      * @throws KuraException
      * @since 1.2
      */
+    @Deprecated
     public BluetoothGattSecurityLevel getSecurityLevel() throws KuraException;
 
     /**
@@ -136,5 +148,6 @@ public interface BluetoothGatt {
      *            Security Level
      * @since 1.2
      */
+    @Deprecated
     public void setSecurityLevel(BluetoothGattSecurityLevel level);
 }

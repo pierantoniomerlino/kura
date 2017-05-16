@@ -29,6 +29,7 @@ public interface BluetoothLeScanListener {
      *
      * @param errorCode
      */
+    @Deprecated
     public void onScanFailed(int errorCode);
 
     /**
@@ -37,6 +38,7 @@ public interface BluetoothLeScanListener {
      * @param devices
      *            A list of found devices
      */
+    @Deprecated
     public void onScanResults(List<BluetoothDevice> devices);
 
 }

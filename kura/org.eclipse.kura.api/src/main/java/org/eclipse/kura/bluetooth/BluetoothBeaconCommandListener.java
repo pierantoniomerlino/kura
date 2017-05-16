@@ -27,11 +27,13 @@ public interface BluetoothBeaconCommandListener {
      *
      * @param errorCode
      */
+    @Deprecated
     public void onCommandFailed(String errorCode);
 
     /**
      * Fired when the command succeeded.
      *
      */
+    @Deprecated
     public void onCommandResults(String results);
 }

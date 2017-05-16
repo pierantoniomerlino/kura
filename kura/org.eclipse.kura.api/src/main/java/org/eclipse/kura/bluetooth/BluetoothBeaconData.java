@@ -15,6 +15,7 @@ public class BluetoothBeaconData {
     public int txpower;
 
     @Override
+    @Deprecated
     public String toString() {
         return "BluetoothBeaconData [uuid=" + this.uuid + ", address=" + this.address + ", major=" + this.major
                 + ", minor=" + this.minor + ", rssi=" + this.rssi + ", txpower=" + this.txpower + "]";

@@ -27,6 +27,7 @@ public interface BluetoothAdapter {
      *
      * @return The MAC address of the adapter
      */
+    @Deprecated
     public String getAddress();
 
     /**
@@ -34,12 +35,14 @@ public interface BluetoothAdapter {
      * SIGINT must be sent to the hcitool process. Otherwise the adapter must be toggled (down/up).
      *
      */
+    @Deprecated
     public void killLeScan();
 
     /**
      * Return true if a lescan is running
      *
      */
+    @Deprecated
     public boolean isScanning();
 
     /**
@@ -47,6 +50,7 @@ public interface BluetoothAdapter {
      *
      * @return true if adapter is enabled, false otherwise
      */
+    @Deprecated
     public boolean isEnabled();
 
     /**
@@ -54,16 +58,19 @@ public interface BluetoothAdapter {
      *
      * @return true if the adapter supports Bluetooth LE, false otherwise
      */
+    @Deprecated
     public boolean isLeReady();
 
     /**
      * Enable the Bluetooth adapter
      */
+    @Deprecated
     public void enable();
 
     /**
      * Disable the Bluetooth adapter
      */
+    @Deprecated
     public void disable();
 
     /**
@@ -74,6 +81,7 @@ public interface BluetoothAdapter {
      * @param listener
      *            Interface for collecting scan results
      */
+    @Deprecated
     public void startLeScan(BluetoothLeScanListener listener);
 
     /**
@@ -89,6 +97,7 @@ public interface BluetoothAdapter {
      * @since 1.0.9
      *
      */
+    @Deprecated
     public void startAdvertisementScan(String companyName, BluetoothAdvertisementScanListener listener);
 
     /**
@@ -100,6 +109,7 @@ public interface BluetoothAdapter {
      * @param listener
      *            Interface for collecting beacon data.
      */
+    @Deprecated
     void startBeaconScan(String companyName, BluetoothBeaconScanListener listener);
 
     /**
@@ -109,18 +119,21 @@ public interface BluetoothAdapter {
      *            Hardware address of remote device
      * @return BluetoothDevice
      */
+    @Deprecated
     public BluetoothDevice getRemoteDevice(String address);
 
     /**
      * Start Beacon advertising for the given interface.
      *
      */
+    @Deprecated
     public void startBeaconAdvertising();
 
     /**
      * Stop Beacon advertising for the given interface.
      *
      */
+    @Deprecated
     public void stopBeaconAdvertising();
 
     /**
@@ -132,6 +145,7 @@ public interface BluetoothAdapter {
      *            Maximum time interval between advertises
      *
      */
+    @Deprecated
     public void setBeaconAdvertisingInterval(Integer min, Integer max);
 
     /**
@@ -159,6 +173,7 @@ public interface BluetoothAdapter {
      *            Indicates whether LE and BR/EDR Host operates simultaneously
      *
      */
+    @Deprecated
     public void setBeaconAdvertisingData(String uuid, Integer major, Integer minor, String companyCode, Integer txPower,
             boolean LELimited, boolean LEGeneral, boolean BR_EDRSupported, boolean LE_BRController, boolean LE_BRHost);
 
@@ -173,6 +188,7 @@ public interface BluetoothAdapter {
      *            Parameters passed to the command
      *
      */
+    @Deprecated
     public void ExecuteCmd(String ogf, String ocf, String parameter);
 
 }

@@ -31,5 +31,6 @@ public interface BluetoothLeNotificationListener {
      * @param value
      *            Value received from the device
      */
+    @Deprecated
     public void onDataReceived(String handle, String value);
 }

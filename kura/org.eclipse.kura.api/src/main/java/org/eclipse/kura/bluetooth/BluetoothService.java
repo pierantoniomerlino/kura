@@ -27,6 +27,7 @@ public interface BluetoothService {
      *
      * @return Default Bluetooth adapter
      */
+    @Deprecated
     public BluetoothAdapter getBluetoothAdapter();
 
     /**
@@ -36,6 +37,7 @@ public interface BluetoothService {
      *            Name of the Bluetooth Adapter
      * @return Bluetooth Adapter
      */
+    @Deprecated
     public BluetoothAdapter getBluetoothAdapter(String name);
 
     /**
@@ -47,5 +49,6 @@ public interface BluetoothService {
      *            Bluetooth Beacon Listener for commands
      * @return Bluetooth Adapter
      */
+    @Deprecated
     public BluetoothAdapter getBluetoothAdapter(String name, BluetoothBeaconCommandListener bbcl);
 }

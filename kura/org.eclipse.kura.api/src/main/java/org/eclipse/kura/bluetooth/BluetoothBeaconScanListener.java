@@ -15,6 +15,7 @@ public interface BluetoothBeaconScanListener {
      *
      * @param beaconData
      */
+    @Deprecated
     public void onBeaconDataReceived(BluetoothBeaconData beaconData);
 
 }

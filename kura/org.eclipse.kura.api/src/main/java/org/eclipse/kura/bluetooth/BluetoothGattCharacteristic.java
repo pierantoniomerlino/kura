@@ -24,26 +24,33 @@ public interface BluetoothGattCharacteristic {
     /*
      * Get UUID of this characteristic
      */
+    @Deprecated
     public UUID getUuid();
 
     /*
      * Get value of this characteristic
      */
+    @Deprecated
     public Object getValue();
 
     /*
      * Set value of this characteristic
      */
+    @Deprecated
     public void setValue(Object value);
 
     /*
      * Get permissions of this characteristic
      */
+    @Deprecated
     public int getPermissions();
 
+    @Deprecated
     public String getHandle();
 
+    @Deprecated
     public int getProperties();
 
+    @Deprecated
     public String getValueHandle();
 }

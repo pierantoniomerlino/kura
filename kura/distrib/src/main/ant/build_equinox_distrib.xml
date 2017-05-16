@@ -506,6 +506,8 @@ fi]]>
                         prefix="${build.output.name}/kura/plugins" />
 			<zipfileset file="${project.build.directory}/plugins/org.eclipse.kura.linux.bluetooth_${org.eclipse.kura.linux.bluetooth.version}.jar"
                         prefix="${build.output.name}/kura/plugins" />
+	        <zipfileset file="${project.build.directory}/plugins/org.eclipse.kura.ble.provider_${org.eclipse.kura.ble.provider.version}.jar"
+	                        prefix="${build.output.name}/kura/plugins" />
 			<zipfileset file="${project.build.directory}/plugins/org.eclipse.kura.linux.watchdog_${org.eclipse.kura.linux.watchdog.version}.jar"
                         prefix="${build.output.name}/kura/plugins" />
 			<zipfileset file="${project.build.directory}/plugins/org.eclipse.kura.core.status_${org.eclipse.kura.core.status.version}.jar"
@@ -1003,7 +1005,11 @@ Resource-Processor: org.eclipse.kura.deployment.customizer.upgrade.rp.UpgradeScr
 			<entry key="osgi.bundles" operation="+"
                 value=", reference:file:${kura.install.dir}/kura/plugins/jdk.dio.${native.tag}_${jdk.dio.version}.jar@3" />
 			<entry key="osgi.bundles" operation="+"
-				value=", reference:file:${kura.install.dir}/kura/plugins/jdk.dio_${jdk.dio.version}.jar@3" /> 
+				value=", reference:file:${kura.install.dir}/kura/plugins/jdk.dio_${jdk.dio.version}.jar@3" />
+	        <entry key="osgi.bundles" operation="+"
+	            value=", reference:file:${kura.install.dir}/kura/plugins/tinyb.${native.tag}_${tinyb.version}.jar@3" />
+	        <entry key="osgi.bundles" operation="+"
+	            value=", reference:file:${kura.install.dir}/kura/plugins/tinyb_${tinyb.version}.jar@3:start" />
 			<entry key="osgi.bundles" operation="+"
 				value=", reference:file:${kura.install.dir}/kura/plugins/org.apache.commons.net_${org.apache.commons.net.version}.jar@3:start" />
 			<entry key="osgi.bundles" operation="+"
@@ -1124,6 +1130,8 @@ Resource-Processor: org.eclipse.kura.deployment.customizer.upgrade.rp.UpgradeScr
 		<propertyfile file="${project.build.directory}/${build.output.name}/config.ini">
 			<entry key="osgi.bundles" operation="+"
 			      value=", reference:file:${kura.install.dir}/kura/kura/plugins/org.eclipse.kura.linux.bluetooth_${org.eclipse.kura.linux.bluetooth.version}.jar@4:start" />
+	        <entry key="osgi.bundles" operation="+"
+	              value=", reference:file:${kura.install.dir}/kura/kura/plugins/org.eclipse.kura.ble.provider_${org.eclipse.kura.ble.provider.version}.jar@4:start" />
 		</propertyfile>
 	</target>
 	

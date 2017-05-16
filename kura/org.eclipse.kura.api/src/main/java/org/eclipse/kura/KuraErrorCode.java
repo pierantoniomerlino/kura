@@ -74,5 +74,17 @@ public enum KuraErrorCode {
      * 
      * @since 1.2
      */
-    SUBSCRIPTION_ERROR
+    SUBSCRIPTION_ERROR,
+    /**
+     * Error for Bluetooth operations
+     * 
+     * @since 1.3
+     */
+    BLE_SCAN_ERROR,
+    BLE_NOTIFICATION_ERROR,
+    BLE_CONNECTION_ERROR,
+    BLE_PAIR_ERROR,
+    BLE_RESOURCE_NOT_FOUND,
+    BLE_GENERIC_ERROR,
+    BLE_IO_ERROR
 }

@@ -33,6 +33,7 @@ public interface BluetoothDevice {
      *
      * @return The devices name
      */
+    @Deprecated
     public String getName();
 
     /**
@@ -40,6 +41,7 @@ public interface BluetoothDevice {
      *
      * @return The physical address of the device
      */
+    @Deprecated
     public String getAdress();
 
     /**
@@ -48,6 +50,7 @@ public interface BluetoothDevice {
      *
      * @return The device type
      */
+    @Deprecated
     public int getType();
 
     /**
@@ -57,6 +60,7 @@ public interface BluetoothDevice {
      *
      * @return Standard Bluetooth connector
      */
+    @Deprecated
     public BluetoothConnector getBluetoothConnector();
 
     /**
@@ -65,6 +69,7 @@ public interface BluetoothDevice {
      *
      * @return BluetoothGatt
      */
+    @Deprecated
     public BluetoothGatt getBluetoothGatt();
 
 }
