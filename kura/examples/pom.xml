@@ -45,8 +45,10 @@
                 <module>org.eclipse.kura.example.serial.publisher</module>
                 <module>org.eclipse.kura.example.gpio</module>
                 <module>org.eclipse.kura.example.ble.tisensortag</module>
-                <module>org.eclipse.kura.example.beacon</module>
-                <module>org.eclipse.kura.example.beacon.scanner</module>
+                <module>org.eclipse.kura.example.ibeacon</module>
+                <module>org.eclipse.kura.example.ibeacon.scanner</module>
+                <module>org.eclipse.kura.example.eddystone</module>
+                <module>org.eclipse.kura.example.eddystone.scanner</module>
                 <module>org.eclipse.kura.example.camel.quickstart</module>
                 <module>org.eclipse.kura.example.camel.publisher</module>
                 <module>org.eclipse.kura.example.camel.aggregation</module>
@@ -69,8 +71,8 @@
                 <module>org.eclipse.kura.example.publisher</module>
                 <module>org.eclipse.kura.example.serial.publisher</module>
                 <module>org.eclipse.kura.example.ble.tisensortag</module>
-                <module>org.eclipse.kura.example.beacon</module>
-                <module>org.eclipse.kura.example.beacon.scanner</module>
+                <module>org.eclipse.kura.example.ibeacon</module>
+                <module>org.eclipse.kura.example.ibeacon.scanner</module>
                 <module>org.eclipse.kura.example.camel.quickstart</module>
                 <module>org.eclipse.kura.example.camel.publisher</module>
                 <module>org.eclipse.kura.example.camel.aggregation</module>

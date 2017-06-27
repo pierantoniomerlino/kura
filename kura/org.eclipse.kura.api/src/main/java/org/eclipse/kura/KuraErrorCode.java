@@ -86,5 +86,6 @@ public enum KuraErrorCode {
     BLE_PAIR_ERROR,
     BLE_RESOURCE_NOT_FOUND,
     BLE_GENERIC_ERROR,
-    BLE_IO_ERROR
+    BLE_IO_ERROR,
+    BLE_COMMAND_ERROR
 }

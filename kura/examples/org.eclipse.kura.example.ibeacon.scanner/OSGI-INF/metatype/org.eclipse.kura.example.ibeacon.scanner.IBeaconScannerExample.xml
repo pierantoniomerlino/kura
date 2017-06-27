@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MetaData xmlns="http://www.osgi.org/xmlns/metatype/v1.2.0" localization="en_us">
+    <OCD id="org.eclipse.kura.example.ibeacon.scanner.IBeaconScannerExample"
+         name="iBeacon Scanner" 
+         description="iBeacon Scanning Example.">
+         
+         <Icon resource="http://s3.amazonaws.com/kura-resources/application/icon/beacon.png" size="32"/>
+         
+         <AD id="enableScanning"
+            name="Enable iBeacon scanning"
+            type="Boolean"
+            cardinality="0"
+            required="true"
+            default="false"
+            description="Enable scan for iBeacons."/>
+            
+        <AD id="timeout"
+            name="Scan interval"
+            type="Integer"
+            cardinality="0"
+            required="true"
+            default="60"
+            description="iBeacon scan duration in seconds."/>
+            
+         <AD id="topicPrefix"
+            name="Topic"
+            type="String"
+            cardinality="0"
+            required="true"
+            default="beacons"
+            description="Prefix for discovered items' topic"/>
+            
+        <AD id="iname"
+            name="Bluetooth interface name"
+            type="String"
+            cardinality="0"
+            required="true"
+            default="hci0"
+            description="Name of bluetooth adapter."/>
+            
+        <AD id="rate_limit"
+            name="Publish period"
+            type="Integer"
+            cardinality="0"
+            required="true"
+            default="10"
+            description="Shortest time between publishes per beacon in seconds"/>
+                                
+    </OCD>
+
+    <Designate pid="org.eclipse.kura.example.ibeacon.scanner.IBeaconScannerExample">
+        <Object ocdref="org.eclipse.kura.example.ibeacon.scanner.IBeaconScannerExample"/>
+    </Designate>
+</MetaData>
