@@ -13,11 +13,13 @@ package org.eclipse.kura.core.cloud;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.kura.KuraException;
 import org.eclipse.kura.cloud.CloudClient;
 import org.eclipse.kura.cloud.CloudClientListener;
+import org.eclipse.kura.cloud.CloudPayloadEncoding;
 import org.eclipse.kura.data.DataService;
 import org.eclipse.kura.message.KuraPayload;
 import org.slf4j.Logger;
@@ -30,6 +32,8 @@ public class CloudClientImpl implements CloudClient, CloudClientListener {
 
     @SuppressWarnings("unused")
     private static final Logger logger = LoggerFactory.getLogger(CloudClientImpl.class);
+
+    private static final String TOPIC_CUMULOCITY = "s/us"; // standard/upstream-static
 
     private final String applicationId;
     private final DataService dataService;
@@ -121,8 +125,20 @@ public class CloudClientImpl implements CloudClient, CloudClientListener {
     @Override
     public int publish(String deviceId, String appTopic, KuraPayload payload, int qos, boolean retain, int priority)
             throws KuraException {
-        byte[] appPayload = this.cloudServiceImpl.encodePayload(payload);
-        return publish(deviceId, appTopic, appPayload, qos, retain, priority);
+        CloudServiceOptions options = this.cloudServiceImpl.getCloudServiceOptions();
+        if (options.getPayloadEncoding() == CloudPayloadEncoding.CSV) {
+            for (Entry<String, Object> entry : payload.metrics().entrySet()) {
+                KuraPayload payloadSingleMetric = new KuraPayload();
+                payloadSingleMetric.addMetric(entry.getKey(), entry.getValue());
+                byte[] appPayload = this.cloudServiceImpl.encodePayload(payloadSingleMetric);
+                publish(deviceId, appTopic, appPayload, qos, retain, priority);
+            }
+            // return a fake message id for now...
+            return 1;
+        } else {
+            byte[] appPayload = this.cloudServiceImpl.encodePayload(payload);
+            return publish(deviceId, appTopic, appPayload, qos, retain, priority);
+        }
     }
 
     @Override
@@ -147,8 +163,8 @@ public class CloudClientImpl implements CloudClient, CloudClientListener {
     }
 
     @Override
-    public int controlPublish(String deviceId, String appTopic, KuraPayload payload, int qos, boolean retain, int priority)
-            throws KuraException {
+    public int controlPublish(String deviceId, String appTopic, KuraPayload payload, int qos, boolean retain,
+            int priority) throws KuraException {
         byte[] appPayload = this.cloudServiceImpl.encodePayload(payload);
         return controlPublish(deviceId, appTopic, appPayload, qos, retain, priority);
     }
@@ -289,17 +305,20 @@ public class CloudClientImpl implements CloudClient, CloudClientListener {
     private String encodeTopic(String deviceId, String appTopic, boolean isControl) {
         CloudServiceOptions options = this.cloudServiceImpl.getCloudServiceOptions();
         StringBuilder sb = new StringBuilder();
-        if (isControl) {
-            sb.append(options.getTopicControlPrefix()).append(options.getTopicSeparator());
+        if (options.getPayloadEncoding() == CloudPayloadEncoding.CSV) {
+            sb.append(TOPIC_CUMULOCITY);
+        } else {
+            if (isControl) {
+                sb.append(options.getTopicControlPrefix()).append(options.getTopicSeparator());
+            }
+
+            sb.append(options.getTopicAccountToken()).append(options.getTopicSeparator()).append(deviceId)
+                    .append(options.getTopicSeparator()).append(this.applicationId);
+
+            if (appTopic != null && !appTopic.isEmpty()) {
+                sb.append(options.getTopicSeparator()).append(appTopic);
+            }
         }
-
-        sb.append(options.getTopicAccountToken()).append(options.getTopicSeparator()).append(deviceId)
-                .append(options.getTopicSeparator()).append(this.applicationId);
-
-        if (appTopic != null && !appTopic.isEmpty()) {
-            sb.append(options.getTopicSeparator()).append(appTopic);
-        }
-
         return sb.toString();
     }
 
@@ -314,7 +333,8 @@ public class CloudClientImpl implements CloudClient, CloudClientListener {
                 // .append(options.getTopicControlPrefix())
                 .append("\\$EDC").append(options.getTopicSeparator()).append(")?")
 
-        .append(options.getTopicAccountToken()).append(options.getTopicSeparator()).append(".+") // Any device ID
+                .append(options.getTopicAccountToken()).append(options.getTopicSeparator()).append(".+") // Any device
+                                                                                                         // ID
                 .append(options.getTopicSeparator()).append(this.applicationId).append("(/.+)?");
 
         return sb.toString();

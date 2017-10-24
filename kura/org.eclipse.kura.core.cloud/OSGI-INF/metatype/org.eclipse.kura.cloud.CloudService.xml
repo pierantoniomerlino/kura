@@ -106,6 +106,7 @@
             description="Specify the message payload encoding.">
             <Option label="Kura Protobuf" value="kura-protobuf" />
             <Option label="Simple JSON" value="simple-json" />
+            <Option label="CSV" value="csv" />
         </AD>
     </OCD>
     

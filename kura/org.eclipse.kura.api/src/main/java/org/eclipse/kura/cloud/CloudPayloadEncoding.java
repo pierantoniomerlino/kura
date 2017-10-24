@@ -18,7 +18,8 @@ package org.eclipse.kura.cloud;
  */
 public enum CloudPayloadEncoding {
     KURA_PROTOBUF("kura-protobuf"),
-    SIMPLE_JSON("simple-json");
+    SIMPLE_JSON("simple-json"),
+    CSV("csv");
 
     private final String encodingText;
 

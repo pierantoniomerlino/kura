@@ -188,6 +188,49 @@ public class LifeCyclePayloadBuilder {
                 systemService.getOsArch(), systemService.getOsgiFwName(), systemService.getOsgiFwVersion());
     }
 
+    public List<KuraBirthPayload> buildCsvBirthPayloads() {
+        // build device profile
+        KuraDeviceProfile deviceProfile = buildDeviceProfile();
+
+        // build device name
+        CloudServiceOptions cso = this.cloudServiceImpl.getCloudServiceOptions();
+        String deviceName = cso.getDeviceDisplayName();
+        if (deviceName == null) {
+            deviceName = this.cloudServiceImpl.getSystemService().getDeviceName();
+        }
+
+        // build birth certificate
+        KuraBirthPayloadBuilder birthPayloadBuilder = new KuraBirthPayloadBuilder();
+        birthPayloadBuilder.withDisplayName(deviceName).withModelName(deviceProfile.getModelName())
+                .withModelId(deviceProfile.getModelId()).withSerialNumber(deviceProfile.getSerialNumber())
+                .withKuraVersion(deviceProfile.getKuraVersion()).withOs(deviceProfile.getOs())
+                .withOsVersion(deviceProfile.getOsVersion());
+
+        if (this.cloudServiceImpl.imei != null && this.cloudServiceImpl.imei.length() > 0
+                && !this.cloudServiceImpl.imei.equals(ERROR)) {
+            birthPayloadBuilder.withModemImei(this.cloudServiceImpl.imei);
+        }
+        if (this.cloudServiceImpl.iccid != null && this.cloudServiceImpl.iccid.length() > 0
+                && !this.cloudServiceImpl.iccid.equals(ERROR)) {
+            birthPayloadBuilder.withModemIccid(this.cloudServiceImpl.iccid);
+        }
+
+        if (this.cloudServiceImpl.imsi != null && this.cloudServiceImpl.imsi.length() > 0
+                && !this.cloudServiceImpl.imsi.equals(ERROR)) {
+            birthPayloadBuilder.withModemImsi(this.cloudServiceImpl.imsi);
+        }
+
+        if (deviceProfile.getLatitude() != null && deviceProfile.getLongitude() != null) {
+            KuraPosition kuraPosition = new KuraPosition();
+            kuraPosition.setLatitude(deviceProfile.getLatitude());
+            kuraPosition.setLongitude(deviceProfile.getLongitude());
+            kuraPosition.setAltitude(deviceProfile.getAltitude());
+            birthPayloadBuilder.withPosition(kuraPosition);
+        }
+
+        return birthPayloadBuilder.buildCsv();
+    }
+
     private String buildConnectionIp(NetInterface<? extends NetInterfaceAddress> ni) {
         String connectionIp = UNKNOWN;
         List<? extends NetInterfaceAddress> nias = ni.getNetInterfaceAddresses();

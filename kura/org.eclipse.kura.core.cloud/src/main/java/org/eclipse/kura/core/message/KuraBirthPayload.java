@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kura.core.message;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.kura.message.KuraPayload;
 import org.eclipse.kura.message.KuraPosition;
 
@@ -47,6 +50,9 @@ public class KuraBirthPayload extends KuraPayload {
     private static final String MODEM_ICCID = "modem_iccid";
     private static final String MODEM_RSSI = "modem_rssi";
     private static final String PAYLOAD_ENCODING = "payload_encoding";
+
+    // For CSV only
+    private static final String CSV_MESSAGE_CONTENT = "csv_message_content";
 
     private static final String DEFAULT_APPLICATION_FRAMEWORK = "Kura";
 
@@ -510,6 +516,66 @@ public class KuraBirthPayload extends KuraPayload {
             }
 
             return birthPayload;
+        }
+
+        public List<KuraBirthPayload> buildCsv() {
+            List<KuraBirthPayload> birthPayloads = new ArrayList<>();
+
+            // Device Name message
+            KuraBirthPayload deviceNamePayload = new KuraBirthPayload();
+            if (this.displayName != null) {
+                StringBuilder deviceMessage = new StringBuilder("100,").append(this.displayName).append(",")
+                        .append("c8y_MQTTDevice");
+                deviceNamePayload.addMetric(CSV_MESSAGE_CONTENT, deviceMessage.toString());
+                birthPayloads.add(deviceNamePayload);
+            }
+
+            // Device info message
+            KuraBirthPayload deviceInfoPayload = new KuraBirthPayload();
+            if (this.serialNumber != null && this.modelName != null && this.modelId != null) {
+                StringBuilder infoMessage = new StringBuilder("110,").append(this.serialNumber).append(",")
+                        .append(this.modelName).append(",").append(this.modelId);
+                deviceInfoPayload.addMetric(CSV_MESSAGE_CONTENT, infoMessage.toString());
+                birthPayloads.add(deviceInfoPayload);
+            }
+
+            // GSM modem info message
+            KuraBirthPayload modemInfoPayload = new KuraBirthPayload();
+            if (this.modemImei != null && this.modemImsi != null && this.modemIccid != null) {
+                StringBuilder modemMessage = new StringBuilder("111,").append(this.modemImei).append(",")
+                        .append(this.modemIccid).append(",").append(this.modemImsi);
+                modemInfoPayload.addMetric(CSV_MESSAGE_CONTENT, modemMessage.toString());
+                birthPayloads.add(modemInfoPayload);
+            }
+
+            // position message
+            KuraBirthPayload positionPayload = new KuraBirthPayload();
+            if (this.position != null) {
+                StringBuilder positionMessage = new StringBuilder("112,").append(this.position.getLatitude())
+                        .append(",").append(this.position.getLongitude()).append(",")
+                        .append(this.position.getAltitude()).append(",").append(this.position.getPrecision());
+                positionPayload.addMetric(CSV_MESSAGE_CONTENT, positionMessage.toString());
+                birthPayloads.add(positionPayload);
+            }
+
+            // firmware info message
+            KuraBirthPayload osPayload = new KuraBirthPayload();
+            if (this.os != null && this.osVersion != null) {
+                StringBuilder deviceMessage = new StringBuilder("115,").append(this.os).append(",")
+                        .append(this.osVersion);
+                osPayload.addMetric(CSV_MESSAGE_CONTENT, deviceMessage.toString());
+                birthPayloads.add(osPayload);
+            }
+
+            // software info message
+            KuraBirthPayload softwarePayload = new KuraBirthPayload();
+            if (this.kuraVersion != null) {
+                StringBuilder softwareMessage = new StringBuilder("116,").append("ESF,").append(this.kuraVersion);
+                softwarePayload.addMetric(CSV_MESSAGE_CONTENT, softwareMessage.toString());
+                birthPayloads.add(softwarePayload);
+            }
+
+            return birthPayloads;
         }
     }
 }

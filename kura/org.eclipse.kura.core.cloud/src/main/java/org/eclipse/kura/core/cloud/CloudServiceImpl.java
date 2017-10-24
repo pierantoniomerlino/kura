@@ -11,8 +11,9 @@
  *******************************************************************************/
 package org.eclipse.kura.core.cloud;
 
-import static org.eclipse.kura.cloud.CloudPayloadEncoding.SIMPLE_JSON;
+import static org.eclipse.kura.cloud.CloudPayloadEncoding.CSV;
 import static org.eclipse.kura.cloud.CloudPayloadEncoding.KURA_PROTOBUF;
+import static org.eclipse.kura.cloud.CloudPayloadEncoding.SIMPLE_JSON;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -37,6 +39,7 @@ import org.eclipse.kura.cloud.CloudPayloadProtoBufEncoder;
 import org.eclipse.kura.cloud.CloudService;
 import org.eclipse.kura.configuration.ConfigurableComponent;
 import org.eclipse.kura.configuration.ConfigurationService;
+import org.eclipse.kura.core.message.KuraBirthPayload;
 import org.eclipse.kura.data.DataService;
 import org.eclipse.kura.data.listener.DataServiceListener;
 import org.eclipse.kura.message.KuraPayload;
@@ -63,6 +66,9 @@ public class CloudServiceImpl implements CloudService, DataServiceListener, Conf
 
     private static final String TOPIC_BA_APP = "BA";
     private static final String TOPIC_MQTT_APP = "MQTT";
+    private static final String TOPIC_CUMULOCITY = "s/us"; // standard/upstream-static
+    private static final String CSV_MESSAGE_CONTENT = "csv_message_content";
+    private static final String CSV_MESSAGE_SEPARATOR = ",";
 
     private ComponentContext ctx;
 
@@ -358,6 +364,8 @@ public class CloudServiceImpl implements CloudService, DataServiceListener, Conf
             bytes = encodeProtobufPayload(payload);
         } else if (preferencesEncoding == SIMPLE_JSON) {
             bytes = encodeJsonPayload(payload);
+        } else if (preferencesEncoding == CSV) {
+            bytes = encodeCsvPayload(payload);
         } else {
             throw new KuraException(KuraErrorCode.ENCODE_ERROR);
         }
@@ -614,15 +622,23 @@ public class CloudServiceImpl implements CloudService, DataServiceListener, Conf
             return;
         }
 
-        StringBuilder sbTopic = new StringBuilder();
-        sbTopic.append(this.options.getTopicControlPrefix()).append(this.options.getTopicSeparator())
-                .append(this.options.getTopicAccountToken()).append(this.options.getTopicSeparator())
-                .append(this.options.getTopicClientIdToken()).append(this.options.getTopicSeparator())
-                .append(this.options.getTopicBirthSuffix());
+        if (this.options.getPayloadEncoding() == CSV) {
+            String topic = TOPIC_CUMULOCITY;
+            List<KuraBirthPayload> payloads = createCsvBirthPayloads();
+            for (KuraBirthPayload payload : payloads) {
+                publishLifeCycleMessage(topic, payload);
+            }
+        } else {
+            StringBuilder sbTopic = new StringBuilder();
+            sbTopic.append(this.options.getTopicControlPrefix()).append(this.options.getTopicSeparator())
+                    .append(this.options.getTopicAccountToken()).append(this.options.getTopicSeparator())
+                    .append(this.options.getTopicClientIdToken()).append(this.options.getTopicSeparator())
+                    .append(this.options.getTopicBirthSuffix());
 
-        String topic = sbTopic.toString();
-        KuraPayload payload = createBirthPayload();
-        publishLifeCycleMessage(topic, payload);
+            String topic = sbTopic.toString();
+            KuraPayload payload = createBirthPayload();
+            publishLifeCycleMessage(topic, payload);
+        }
     }
 
     private void publishDisconnectCertificate() throws KuraException {
@@ -660,6 +676,11 @@ public class CloudServiceImpl implements CloudService, DataServiceListener, Conf
     private KuraPayload createBirthPayload() {
         LifeCyclePayloadBuilder payloadBuilder = new LifeCyclePayloadBuilder(this);
         return payloadBuilder.buildBirthPayload();
+    }
+
+    private List<KuraBirthPayload> createCsvBirthPayloads() {
+        LifeCyclePayloadBuilder payloadBuilder = new LifeCyclePayloadBuilder(this);
+        return payloadBuilder.buildCsvBirthPayloads();
     }
 
     private KuraPayload createDisconnectPayload() {
@@ -725,4 +746,56 @@ public class CloudServiceImpl implements CloudService, DataServiceListener, Conf
         }
         return kuraPayload;
     }
+
+    private byte[] encodeCsvPayload(KuraPayload payload) {
+        byte[] messageContent = null;
+        String csvMessageContent = (String) payload.getMetric(CSV_MESSAGE_CONTENT);
+        if (csvMessageContent != null) {
+            messageContent = csvMessageContent.getBytes();
+        } else {
+            try {
+                for (Entry<String, Object> entry : payload.metrics().entrySet()) {
+                    messageContent = encodeMessageContent(entry.getKey(), entry.getValue());
+                }
+            } catch (KuraException e) {
+                logger.error("Unable to encode csv message", e);
+            }
+        }
+        return messageContent;
+    }
+
+    private byte[] encodeMessageContent(String name, Object value) throws KuraException {
+        String fragment;
+        String series;
+        String[] splittedName = name.split(" ");
+        if (splittedName.length == 1) {
+            fragment = name;
+            series = "normal";
+        } else {
+            fragment = splittedName[0];
+            series = splittedName[1];
+        }
+
+        StringBuilder message = new StringBuilder("200,");
+        message.append(fragment).append(CSV_MESSAGE_SEPARATOR).append(series).append(CSV_MESSAGE_SEPARATOR);
+        if (value instanceof String) {
+            message.append(value);
+        } else if (value instanceof Integer) {
+            message.append(Integer.toString((Integer) value));
+        } else if (value instanceof Long) {
+            message.append(Long.toString((Long) value));
+        } else if (value instanceof Double) {
+            message.append(Double.toString((Double) value));
+        } else if (value instanceof Float) {
+            message.append(Float.toString((Float) value));
+        } else if (value instanceof Boolean) {
+            message.append((Boolean) value ? "1" : "0");
+        } else {
+            throw new KuraException(KuraErrorCode.ENCODE_ERROR);
+        }
+
+        logger.debug("Publish message : {}", message.toString());
+        return message.toString().getBytes();
+    }
+
 }
