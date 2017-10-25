@@ -239,7 +239,7 @@ public class BluetoothLe implements ConfigurableComponent {
         for (BluetoothLeDevice bluetoothLeDevice : devices) {
             logger.info("Address {} Name {}", bluetoothLeDevice.getAddress(), bluetoothLeDevice.getName());
 
-            if (bluetoothLeDevice.getName().contains("SensorTag")
+            if (bluetoothLeDevice.getName().contains("SensorTag") || bluetoothLeDevice.getName().contains("Sensor Tag")
                     && !isSensorTagInList(bluetoothLeDevice.getAddress())) {
                 this.tiSensorTagList.add(new TiSensorTag(bluetoothLeDevice));
             }
