@@ -68,7 +68,8 @@ public class ModemDriver {
             } catch (IOException e) {
                 logger.warn(FAILED_INITIALIZE_GPIO_MSG, gpioIndex, e);
             }
-        } else if (TARGET_NAME.equals(KuraConstants.Reliagate_10_11.getTargetName())) {
+        } else if (TARGET_NAME.equals(KuraConstants.Reliagate_10_11.getTargetName())
+                || TARGET_NAME.equals(KuraConstants.Reliagate_10_12.getTargetName())) {
             String gpioIndex = GPIO_INDEX_60;
             String gpioPath = BASE_GPIO_PATH + gpioIndex;
             String gpioDirectionPath = gpioPath + GPIO_DIRECTION_SUFFIX_PATH;
@@ -136,7 +137,8 @@ public class ModemDriver {
                 String gpioPath = BASE_GPIO_PATH + gpioIndex;
                 String gpioValuePath = gpioPath + GPIO_VALUE_SUFFIX_PATH;
                 toggleGpio(gpioValuePath);
-            } else if (TARGET_NAME.equals(KuraConstants.Reliagate_10_11.getTargetName())) {
+            } else if (TARGET_NAME.equals(KuraConstants.Reliagate_10_11.getTargetName())
+                    || TARGET_NAME.equals(KuraConstants.Reliagate_10_12.getTargetName())) {
                 String gpioIndex = GPIO_INDEX_60;
                 String gpioPath = BASE_GPIO_PATH + gpioIndex;
                 String gpioValuePath = gpioPath + GPIO_VALUE_SUFFIX_PATH;
@@ -220,7 +222,8 @@ public class ModemDriver {
                 String gpioPath = BASE_GPIO_PATH + gpioIndex;
                 String gpioValuePath = gpioPath + GPIO_VALUE_SUFFIX_PATH;
                 toggleGpio(gpioValuePath);
-            } else if (TARGET_NAME.equals(KuraConstants.Reliagate_10_11.getTargetName())) {
+            } else if (TARGET_NAME.equals(KuraConstants.Reliagate_10_11.getTargetName())
+                    || TARGET_NAME.equals(KuraConstants.Reliagate_10_12.getTargetName())) {
                 String gpioIndex = GPIO_INDEX_60;
                 String gpioPath = BASE_GPIO_PATH + gpioIndex;
                 String gpioValuePath = gpioPath + GPIO_VALUE_SUFFIX_PATH;
